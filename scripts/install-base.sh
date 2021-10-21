@@ -12,13 +12,19 @@ fi
 FQDN='arch'
 KEYMAP='fr-latin1'
 LANGUAGE='en_US.UTF-8'
+
 ANSIBLE_LOGIN=${ANSIBLE_IN_LOGIN:-"ansible"}
 ANSIBLE_IN_PASSWORD=${ANSIBLE_IN_PASSWORD:-"password"}
-ANSIBLE_PASSWORD=$(/usr/bin/openssl passwd -crypt $ANSIBLE_IN_PASSWORD)
+#ANSIBLE_PASSWORD=$(/usr/bin/openssl passwd -crypt $ANSIBLE_IN_PASSWORD)
+
 ROOT_IN_PASSWORD=${ROOT_IN_PASSWORD:-"password"}
-ROOT_PASSWORD=$(/usr/bin/openssl passwd -crypt $ROOT_IN_PASSWORD)
-VAGRANT_PASSWORD=$(/usr/bin/openssl passwd -crypt 'vagrant')
-PACKER_PASSWORD=$(/usr/bin/openssl passwd -crypt 'packer')
+#ROOT_PASSWORD=$(/usr/bin/openssl passwd -crypt $ROOT_IN_PASSWORD)
+
+PACKER_IN_PASSWORD=${PACKER_IN_PASSWORD:-"password"}
+#PACKER_PASSWORD=$(/usr/bin/openssl passwd -crypt $PACKER_IN_PASSWORD)
+
+#VAGRANT_PASSWORD=$(/usr/bin/openssl passwd -crypt 'vagrant')
+
 TIMEZONE='UTC'
 
 CONFIG_SCRIPT='/usr/local/bin/arch-config.sh'
@@ -85,7 +91,7 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating initramfs.."
   /usr/bin/mkinitcpio -p linux
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Setting root pasword.."
-  /usr/bin/usermod --password ${ROOT_PASSWORD} root
+  echo "root:$ROOT_IN_PASSWORD" | /usr/bin/chpasswd
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring network.."
   # Disable systemd Predictable Network Interface Names and revert to traditional interface names
   # https://wiki.archlinux.org/index.php/Network_configuration#Revert_to_traditional_interface_names
@@ -102,7 +108,8 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
 
   # packer-specific configuration
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating packer user.."
-  /usr/bin/useradd --password ${PACKER_PASSWORD} --comment 'Packer' --create-home --user-group packer
+  /usr/bin/useradd --comment 'Packer' --create-home --user-group packer
+  echo "packer:$PACKER_IN_PASSWORD" | /usr/bin/chpasswd
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sudo.."
   echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/packer
   echo 'packer ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/packer
@@ -110,7 +117,8 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
 
   # ${ANSIBLE_LOGIN}-specific configuration
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating ${ANSIBLE_LOGIN} user.."
-  /usr/bin/useradd --password ${ANSIBLE_PASSWORD} --comment '${ANSIBLE_LOGIN}' --create-home --user-group ${ANSIBLE_LOGIN}
+  /usr/bin/useradd --comment '${ANSIBLE_LOGIN}' --create-home --user-group ${ANSIBLE_LOGIN}
+  echo "$ANSIBLE_LOGIN:$ANSIBLE_IN_PASSWORD" | /usr/bin/chpasswd
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sudo.."
   echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/${ANSIBLE_LOGIN}
   echo '${ANSIBLE_LOGIN} ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/${ANSIBLE_LOGIN}
@@ -122,7 +130,8 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   if [ "${WITH_VAGRANT}" != "False" ] ; then
     # vagrant-specific configuration
       echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating vagrant user.."
-     /usr/bin/useradd --password ${VAGRANT_PASSWORD} --comment 'vagrant' --create-home --user-group vagrant
+     /usr/bin/useradd --comment 'vagrant' --create-home --user-group vagrant
+      echo "vagrant:vagrant" | /usr/bin/chpasswd
       echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sudo.."
       echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/vagrant
       echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/vagrant
