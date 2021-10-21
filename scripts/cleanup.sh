@@ -14,6 +14,6 @@ if [[ $WRITE_ZEROS == "true" ]]; then
 fi
 
 echo ">>>> cleanup.sh: Remove packer use.."
-#rm /etc/sudoers.d/packer
+rm /etc/sudoers.d/packer
 #userdel -f packer
 
