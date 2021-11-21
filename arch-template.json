@@ -13,6 +13,7 @@
         "ansible_password": "{{ vault `kv/packer` `ansible_password` }}",
         "root_password": "{{ vault `kv/packer` `root_password` }}",
         "packer_password": "{{ uuid }}",
+        "vm_name": "my-vm",
         "__builder_shutdown_command": "sudo systemctl start poweroff.timer",
         "_comment":  "comment"
     },
@@ -39,6 +40,7 @@
                 "/usr/bin/curl -O http://{{ .HTTPIP }}:{{ .HTTPPort }}/ansible.pub<enter><wait5>",
                 "/usr/bin/bash ./enable-ssh.sh {{ user `packer_password` }}<enter>"
             ],
+            "vm_name": "{{ user `vm_name` }}",
             "cpus": 2,
             "memory": 4096,
             "disk_size": 20480,
