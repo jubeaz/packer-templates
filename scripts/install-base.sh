@@ -15,15 +15,10 @@ LANGUAGE='en_US.UTF-8'
 
 ANSIBLE_LOGIN=${ANSIBLE_IN_LOGIN:-"ansible"}
 ANSIBLE_IN_PASSWORD=${ANSIBLE_IN_PASSWORD:-"password"}
-#ANSIBLE_PASSWORD=$(/usr/bin/openssl passwd -crypt $ANSIBLE_IN_PASSWORD)
 
 ROOT_IN_PASSWORD=${ROOT_IN_PASSWORD:-"password"}
-#ROOT_PASSWORD=$(/usr/bin/openssl passwd -crypt $ROOT_IN_PASSWORD)
 
 PACKER_IN_PASSWORD=${PACKER_IN_PASSWORD:-"password"}
-#PACKER_PASSWORD=$(/usr/bin/openssl passwd -crypt $PACKER_IN_PASSWORD)
-
-#VAGRANT_PASSWORD=$(/usr/bin/openssl passwd -crypt 'vagrant')
 
 TIMEZONE='UTC'
 
@@ -64,7 +59,7 @@ echo ">>>> install-base.sh: Bootstrapping the base installation.."
 # Can be removed when ${ANSIBLE_LOGIN}'s Arch plugin will use systemd-networkd: https://github.com/hashicorp/${ANSIBLE_LOGIN}/pull/11400
 echo ">>>> install-base.sh: Installing basic packages.."
 /usr/bin/arch-chroot ${TARGET_DIR} pacman -S --noconfirm gptfdisk openssh\
-    syslinux dhcpcd netctl ${ADDITIONAL_PKGS}
+    syslinux dhcpcd netctl rsync ${ADDITIONAL_PKGS}
 
 echo ">>>> install-base.sh: Configuring syslinux.."
 /usr/bin/arch-chroot ${TARGET_DIR} syslinux-install_update -i -a -m
@@ -96,7 +91,15 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   # Disable systemd Predictable Network Interface Names and revert to traditional interface names
   # https://wiki.archlinux.org/index.php/Network_configuration#Revert_to_traditional_interface_names
   /usr/bin/ln -s /dev/null /etc/udev/rules.d/80-net-setup-link.rules
-  /usr/bin/systemctl enable dhcpcd@eth0.service
+  #/usr/bin/systemctl enable dhcpcd@eth0.service
+  echo "[Match]" > /etc/systemd/network/0.network
+  echo "Name=eth0" >> /etc/systemd/network/0.network
+  echo "" >> /etc/systemd/network/0.network
+  echo "[Network]" >> /etc/systemd/network/0.network
+  echo "DHCP=yes" >> /etc/systemd/network/0.network
+
+  /usr/bin/systemctl enable systemd-networkd
+  /usr/bin/systemctl enable systemd-resolved
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sshd.."
   /usr/bin/sed -i 's/#UseDNS yes/UseDNS no/' /etc/ssh/sshd_config
   /usr/bin/systemctl enable sshd.service
@@ -121,7 +124,7 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   echo "$ANSIBLE_LOGIN:$ANSIBLE_IN_PASSWORD" | /usr/bin/chpasswd
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sudo.."
   echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/${ANSIBLE_LOGIN}
-  echo '${ANSIBLE_LOGIN} ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/${ANSIBLE_LOGIN}
+  echo "${ANSIBLE_LOGIN} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/${ANSIBLE_LOGIN}
   /usr/bin/chmod 0440 /etc/sudoers.d/${ANSIBLE_LOGIN}
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring ssh access for ${ANSIBLE_LOGIN}.."
   /usr/bin/install --directory --owner=${ANSIBLE_LOGIN} --group=${ANSIBLE_LOGIN} --mode=0700 /home/${ANSIBLE_LOGIN}/.ssh
@@ -150,7 +153,7 @@ echo ">>>> install-base.sh: Entering chroot and configuring system.."
 /usr/bin/arch-chroot ${TARGET_DIR} ${CONFIG_SCRIPT}
 rm "${TARGET_DIR}${CONFIG_SCRIPT}"
 
-echo ">>>> install-base.sh: Remove Ansible temp key file.."
+echo ">>>> install-base.sh: Remove ${ANSIBLE_LOGIN} temp key file.."
 rm "${TARGET_DIR}/ansible.pub"
 rm "/root/ansible.pub"
 # http://comments.gmane.org/gmane.linux.arch.general/48739
@@ -163,7 +166,7 @@ echo ">>>> install-base.sh: Completing installation.."
 # Turning network interfaces down to make sure SSH session was dropped on host.
 # More info at: https://www.packer.io/docs/provisioners/shell.html#handling-reboots
 echo '==> Turning down network interfaces and rebooting'
-for i in $(/usr/bin/netstat -i | /usr/bin/tail +3 | /usr/bin/awk '{print $1}'); do /usr/bin/ip link set ${i} down; done
+# for i in $(/usr/bin/netstat -i | /usr/bin/tail +3 | /usr/bin/awk '{print $1}'); do /usr/bin/ip link set ${i} down; done
 /usr/bin/systemctl reboot
 echo ">>>> install-base.sh: Installation complete!"
 echo ">>>>>>>>>>>>>>>>>> DONE >>>>>>>>>>>>>>>>>>>>"
