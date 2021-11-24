@@ -14,3 +14,6 @@ echo ">>>> install-virtualbox.sh: Enabling RPC Bind service.."
 # Add groups for VirtualBox folder sharing
 echo ">>>> install-virtualbox.sh: Enabling VirtualBox Shared Folders.."
 /usr/bin/usermod --append --groups benmusashi,vboxsf benmusashi
+
+echo ">>>> install-virtualbox.sh: Enable init-vm Service"
+/bin/systemctl enable init-vm

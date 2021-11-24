@@ -15,9 +15,7 @@ LANGUAGE='en_US.UTF-8'
 
 ANSIBLE_LOGIN=${ANSIBLE_IN_LOGIN:-"ansible"}
 ANSIBLE_IN_PASSWORD=${ANSIBLE_IN_PASSWORD:-"password"}
-
 ROOT_IN_PASSWORD=${ROOT_IN_PASSWORD:-"password"}
-
 PACKER_IN_PASSWORD=${PACKER_IN_PASSWORD:-"password"}
 
 TIMEZONE='UTC'
@@ -159,6 +157,8 @@ rm "/root/ansible.pub"
 # http://comments.gmane.org/gmane.linux.arch.general/48739
 echo ">>>> install-base.sh: Adding workaround for shutdown race condition.."
 /usr/bin/install --mode=0644 /root/poweroff.timer "${TARGET_DIR}/etc/systemd/system/poweroff.timer"
+echo ">>>> install-base.sh: Install init-vm service file.."
+/usr/bin/install --mode=0644 /root/init-vm.service "${TARGET_DIR}/etc/systemd/system/init-vm.service"
 
 echo ">>>> install-base.sh: Completing installation.."
 /usr/bin/sleep 3
