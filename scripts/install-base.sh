@@ -8,6 +8,8 @@ if [[ $PACKER_BUILDER_TYPE == "qemu" ]]; then
 else
   DISK='/dev/sda'
 fi
+ROOT_PARTITION="${DISK}1"
+IS_UEFI=${IS_UEFI:-false}
 
 FQDN='arch'
 KEYMAP='fr-latin1'
@@ -21,26 +23,39 @@ PACKER_IN_PASSWORD=${PACKER_IN_PASSWORD:-"password"}
 TIMEZONE='UTC'
 
 CONFIG_SCRIPT='/usr/local/bin/arch-config.sh'
-ROOT_PARTITION="${DISK}1"
 TARGET_DIR='/mnt'
 COUNTRY=${COUNTRY:-FR}
 ADDITIONAL_PKGS=${ADDITIONAL_PKGS:-""}
 WITH_VAGRANT=${WITH_VAGRANT:-False}
 MIRRORLIST="https://archlinux.org/mirrorlist/?country=${COUNTRY}&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"
 
-echo ">>>> install-base.sh: Clearing partition table on ${DISK}.."
-/usr/bin/sgdisk --zap ${DISK}
 
-echo ">>>> install-base.sh: Destroying magic strings and signatures on ${DISK}.."
-/usr/bin/dd if=/dev/zero of=${DISK} bs=512 count=2048
-/usr/bin/wipefs --all ${DISK}
+if [ "${WITH_VAGRANT}" != "false" ] ; then
+    echo ">>>> install-base.sh: Clearing partition table on ${DISK}.."
+    /usr/bin/sgdisk --zap ${DISK}
 
-echo ">>>> install-base.sh: Creating /root partition on ${DISK}.."
-/usr/bin/sgdisk --new=1:0:0 ${DISK}
+    echo ">>>> install-base.sh: Destroying magic strings and signatures on ${DISK}.."
+    /usr/bin/dd if=/dev/zero of=${DISK} bs=512 count=2048
+    /usr/bin/wipefs --all ${DISK}
 
-echo ">>>> install-base.sh: Setting ${DISK} bootable.."
-/usr/bin/sgdisk ${DISK} --attributes=1:set:2
+    echo ">>>> install-base.sh: Creating /root partition on ${DISK}.."
+    /usr/bin/sgdisk --new=1:0:0 ${DISK}
 
+    echo ">>>> install-base.sh: Setting ${DISK} bootable.."
+    /usr/bin/sgdisk ${DISK} --attributes=1:set:2
+else
+    sfdisk --force ${DISK}  << PARTITION
+labe: dos
+device: /dev/sda
+unit: sectors
+sector-size: 512
+
+/dev/sda1 : start= 2048, size= 1, type=83, bootable
+
+PARTITION
+
+    parted ${DISK} resizepart 1 100%
+fi
 echo ">>>> install-base.sh: Creating /root filesystem (ext4).."
 /usr/bin/mkfs.ext4 -O ^64bit -F -m 0 -q -L root ${ROOT_PARTITION}
 
