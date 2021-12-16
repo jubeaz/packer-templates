@@ -29,6 +29,11 @@ ADDITIONAL_PKGS=${ADDITIONAL_PKGS:-""}
 WITH_VAGRANT=${WITH_VAGRANT:-False}
 MIRRORLIST="https://archlinux.org/mirrorlist/?country=${COUNTRY}&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"
 
+# #######################################
+# 
+# DISK MANAGEMENT
+#
+# #######################################
 
 if [ "${WITH_VAGRANT}" != "false" ] ; then
     echo ">>>> install-base.sh: Clearing partition table on ${DISK}.."
@@ -62,6 +67,12 @@ echo ">>>> install-base.sh: Creating /root filesystem (ext4).."
 echo ">>>> install-base.sh: Mounting ${ROOT_PARTITION} to ${TARGET_DIR}.."
 /usr/bin/mount -o noatime,errors=remount-ro ${ROOT_PARTITION} ${TARGET_DIR}
 
+# #######################################
+# 
+# 
+#
+# #######################################
+
 echo ">>>> install-base.sh: Setting pacman ${COUNTRY} mirrors.."
 curl -s "$MIRRORLIST" |  sed 's/^#Server/Server/' > /etc/pacman.d/mirrorlist
 
@@ -72,7 +83,7 @@ echo ">>>> install-base.sh: Bootstrapping the base installation.."
 # Can be removed when ${ANSIBLE_LOGIN}'s Arch plugin will use systemd-networkd: https://github.com/hashicorp/${ANSIBLE_LOGIN}/pull/11400
 echo ">>>> install-base.sh: Installing basic packages.."
 /usr/bin/arch-chroot ${TARGET_DIR} pacman -S --noconfirm gptfdisk openssh\
-    syslinux dhcpcd netctl rsync ${ADDITIONAL_PKGS}
+    syslinux dhcpcd netctl rsync netplan ${ADDITIONAL_PKGS}
 
 echo ">>>> install-base.sh: Configuring syslinux.."
 /usr/bin/arch-chroot ${TARGET_DIR} syslinux-install_update -i -a -m
@@ -87,6 +98,13 @@ echo ">>>> install-base.sh: Generating the system configuration script.."
 
 echo ">>>> install-base.sh: Install ansible tmp key file.."
 /usr/bin/install --mode=0644 /root/ansible.pub "${TARGET_DIR}/ansible.pub"
+
+# #######################################
+# 
+# 
+#
+# #######################################
+
 CONFIG_SCRIPT_SHORT=`basename "$CONFIG_SCRIPT"`
 cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring hostname, timezone, and keymap.."
@@ -104,13 +122,17 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   # Disable systemd Predictable Network Interface Names and revert to traditional interface names
   # https://wiki.archlinux.org/index.php/Network_configuration#Revert_to_traditional_interface_names
   /usr/bin/ln -s /dev/null /etc/udev/rules.d/80-net-setup-link.rules
-  #/usr/bin/systemctl enable dhcpcd@eth0.service
-  echo "[Match]" > /etc/systemd/network/0.network
-  echo "Name=eth0" >> /etc/systemd/network/0.network
-  echo "" >> /etc/systemd/network/0.network
-  echo "[Network]" >> /etc/systemd/network/0.network
-  echo "DHCP=yes" >> /etc/systemd/network/0.network
 
+  mkdir /etc/netplan
+  echo "network:" > /etc/netplan/network.yaml
+  echo "  version: 2" >> /etc/netplan/network.yaml
+  echo "  renderer: networkd" >> /etc/netplan/network.yaml
+  echo "  ethernets:" >> /etc/netplan/network.yaml
+  echo "    eth0:" >> /etc/netplan/network.yaml
+  echo "      dhcp4: true" >> /etc/netplan/network.yaml
+
+  netplan generate
+  netplan appy
   /usr/bin/systemctl enable systemd-networkd
   /usr/bin/systemctl enable systemd-resolved
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sshd.."
