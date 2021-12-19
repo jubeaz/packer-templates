@@ -13,10 +13,3 @@ if [[ $WRITE_ZEROS == "true" ]]; then
   /usr/bin/sync
 fi
 
-# incompatible with shutdown method
-#echo ">>>> cleanup.sh: Remove packer use.."
-#rm /etc/sudoers.d/packer
-
-
-echo ">>>> install-virtualbox.sh: Enable init-vm Service"
-/bin/systemctl enable init-vm.service

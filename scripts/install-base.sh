@@ -3,30 +3,37 @@
 # stop on errors
 set -eu
 
-if [[ $PACKER_BUILDER_TYPE == "qemu" ]]; then
+IS_UEFI=${IS_UEFI:-false}
+FQDN=${FQDN:-'arch'}
+KEYMAP=${KEYMAP:-'fr-latin1'}
+LANGUAGE=${LANGUAGE:-'en_US.UTF-8'}
+COUNTRY=${COUNTRY:-FR}
+ADDITIONAL_PKGS=${ADDITIONAL_PKGS:-""}
+PACKER_PASSWORD=${PACKER_PASSWORD:-"password"}
+
+echo ">>>>>>>>>>>>>>>> IS_UEFI: ${IS_UEFI}"
+echo ">>>>>>>>>>>>>>>> COUNTRY: ${COUNTRY}"
+echo ">>>>>>>>>>>>>>>> ADDITIONAL_PKGS: ${ADDITIONAL_PKGS}"
+echo ">>>>>>>>>>>>>>>> PACKER_PASSWORD: ${PACKER_PASSWORD}"
+echo ">>>>>>>>>>>>>>>> ${FQDN}"
+echo ">>>>>>>>>>>>>>>> ${KEYMAP}"
+echo ">>>>>>>>>>>>>>>> ${LANGUAGE}"
+echo ">>>>>>>>>>>>>>>> ${PACKER_BUILDER_TYPE}"
+echo ">>>>>>>>>>>>>>>> ${HTTPSRV}"
+
+
+TIMEZONE='UTC'
+CONFIG_SCRIPT='/usr/local/bin/arch-config.sh'
+TARGET_DIR='/mnt'
+
+if [ $PACKER_BUILDER_TYPE == "qemu" ]; then
   DISK='/dev/vda'
 else
   DISK='/dev/sda'
 fi
+
 ROOT_PARTITION="${DISK}1"
-IS_UEFI=${IS_UEFI:-false}
 
-FQDN='arch'
-KEYMAP='fr-latin1'
-LANGUAGE='en_US.UTF-8'
-
-ANSIBLE_LOGIN=${ANSIBLE_IN_LOGIN:-"ansible"}
-ANSIBLE_IN_PASSWORD=${ANSIBLE_IN_PASSWORD:-"password"}
-ROOT_IN_PASSWORD=${ROOT_IN_PASSWORD:-"password"}
-PACKER_IN_PASSWORD=${PACKER_IN_PASSWORD:-"password"}
-
-TIMEZONE='UTC'
-
-CONFIG_SCRIPT='/usr/local/bin/arch-config.sh'
-TARGET_DIR='/mnt'
-COUNTRY=${COUNTRY:-FR}
-ADDITIONAL_PKGS=${ADDITIONAL_PKGS:-""}
-WITH_VAGRANT=${WITH_VAGRANT:-False}
 MIRRORLIST="https://archlinux.org/mirrorlist/?country=${COUNTRY}&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"
 
 # #######################################
@@ -35,7 +42,7 @@ MIRRORLIST="https://archlinux.org/mirrorlist/?country=${COUNTRY}&protocol=http&p
 #
 # #######################################
 
-if [ "${WITH_VAGRANT}" != "false" ] ; then
+if [ "${IS_UEFI}" != "false" ] ; then
     echo ">>>> install-base.sh: Clearing partition table on ${DISK}.."
     /usr/bin/sgdisk --zap ${DISK}
 
@@ -51,7 +58,7 @@ if [ "${WITH_VAGRANT}" != "false" ] ; then
 else
     sfdisk --force ${DISK}  << PARTITION
 labe: dos
-device: /dev/sda
+device: ${DISK}
 unit: sectors
 sector-size: 512
 
@@ -61,6 +68,7 @@ PARTITION
 
     parted ${DISK} resizepart 1 100%
 fi
+
 echo ">>>> install-base.sh: Creating /root filesystem (ext4).."
 /usr/bin/mkfs.ext4 -O ^64bit -F -m 0 -q -L root ${ROOT_PARTITION}
 
@@ -96,8 +104,6 @@ echo ">>>> install-base.sh: Generating the filesystem table.."
 echo ">>>> install-base.sh: Generating the system configuration script.."
 /usr/bin/install --mode=0755 /dev/null "${TARGET_DIR}${CONFIG_SCRIPT}"
 
-echo ">>>> install-base.sh: Install ansible tmp key file.."
-/usr/bin/install --mode=0644 /root/ansible.pub "${TARGET_DIR}/ansible.pub"
 
 # #######################################
 # 
@@ -116,8 +122,6 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   /usr/bin/locale-gen
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating initramfs.."
   /usr/bin/mkinitcpio -p linux
-  echo ">>>> ${CONFIG_SCRIPT_SHORT}: Setting root pasword.."
-  echo "root:$ROOT_IN_PASSWORD" | /usr/bin/chpasswd
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring network.."
   # Disable systemd Predictable Network Interface Names and revert to traditional interface names
   # https://wiki.archlinux.org/index.php/Network_configuration#Revert_to_traditional_interface_names
@@ -147,39 +151,12 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   # packer-specific configuration
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating packer user.."
   /usr/bin/useradd --comment 'Packer' --create-home --user-group packer
-  echo "packer:$PACKER_IN_PASSWORD" | /usr/bin/chpasswd
+  echo "packer:$PACKER_PASSWORD" | /usr/bin/chpasswd
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sudo.."
   echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/packer
   echo 'packer ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/packer
   /usr/bin/chmod 0440 /etc/sudoers.d/packer
 
-  # ${ANSIBLE_LOGIN}-specific configuration
-  echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating ${ANSIBLE_LOGIN} user.."
-  /usr/bin/useradd --comment '${ANSIBLE_LOGIN}' --create-home --user-group ${ANSIBLE_LOGIN}
-  echo "$ANSIBLE_LOGIN:$ANSIBLE_IN_PASSWORD" | /usr/bin/chpasswd
-  echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sudo.."
-  echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/${ANSIBLE_LOGIN}
-  echo "${ANSIBLE_LOGIN} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/${ANSIBLE_LOGIN}
-  /usr/bin/chmod 0440 /etc/sudoers.d/${ANSIBLE_LOGIN}
-  echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring ssh access for ${ANSIBLE_LOGIN}.."
-  /usr/bin/install --directory --owner=${ANSIBLE_LOGIN} --group=${ANSIBLE_LOGIN} --mode=0700 /home/${ANSIBLE_LOGIN}/.ssh
-  /usr/bin/install --owner=${ANSIBLE_LOGIN} --group=${ANSIBLE_LOGIN} --mode=0600 /ansible.pub /home/${ANSIBLE_LOGIN}/.ssh/authorized_keys
-
-  if [ "${WITH_VAGRANT}" != "False" ] ; then
-    # vagrant-specific configuration
-      echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating vagrant user.."
-     /usr/bin/useradd --comment 'vagrant' --create-home --user-group vagrant
-      echo "vagrant:vagrant" | /usr/bin/chpasswd
-      echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sudo.."
-      echo 'Defaults env_keep += "SSH_AUTH_SOCK"' > /etc/sudoers.d/vagrant
-      echo 'vagrant ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/vagrant
-      /usr/bin/chmod 0440 /etc/sudoers.d/vagrant
-      echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring ssh access for vagrant.."
-      /usr/bin/install --directory --owner=vagrant --group=vagrant --mode=0700 /home/vagrant/.ssh
-      /usr/bin/curl --output /home/vagrant/.ssh/authorized_keys --location https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub
-      /usr/bin/chown vagrant:vagrant/home/vagrant/.ssh/authorized_keys
-      /usr/bin/chmod 0600 /home/vagrant/.ssh/authorized_keys
-  fi
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Cleaning up.."
   /usr/bin/pacman -Rcns --noconfirm gptfdisk
 EOF
@@ -188,14 +165,9 @@ echo ">>>> install-base.sh: Entering chroot and configuring system.."
 /usr/bin/arch-chroot ${TARGET_DIR} ${CONFIG_SCRIPT}
 rm "${TARGET_DIR}${CONFIG_SCRIPT}"
 
-echo ">>>> install-base.sh: Remove ${ANSIBLE_LOGIN} temp key file.."
-rm "${TARGET_DIR}/ansible.pub"
-rm "/root/ansible.pub"
 # http://comments.gmane.org/gmane.linux.arch.general/48739
-echo ">>>> install-base.sh: Adding workaround for shutdown race condition.."
-/usr/bin/install --mode=0644 /root/poweroff.timer "${TARGET_DIR}/etc/systemd/system/poweroff.timer"
-echo ">>>> install-base.sh: Install init-vm service file.."
-/usr/bin/install --mode=0644 /root/init-vm.service "${TARGET_DIR}/etc/systemd/system/init-vm.service"
+#echo ">>>> install-base.sh: Adding workaround for shutdown race condition.."
+#/usr/bin/install --mode=0644 /root/poweroff.timer "${TARGET_DIR}/etc/systemd/system/poweroff.timer"
 
 echo ">>>> install-base.sh: Completing installation.."
 /usr/bin/sleep 3

@@ -1,2 +1,3 @@
 output*
-arch-qemu.pkrvars.hcl
+*.pkrvars.hcl
+srv/cloud
