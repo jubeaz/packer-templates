@@ -1,3 +1,4 @@
 output*
 *.pkrvars.hcl
-srv/cloud
+srv/cloud/*.private
+srv/cloud/templates
