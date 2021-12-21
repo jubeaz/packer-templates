@@ -13,6 +13,7 @@ provisioner "shell" {
         "KEYMAP=${var.keymap}",
         "LANGUAGE=${var.language}",
         "PACKER_PASSWORD=${var.packer_password}",
+        "ROOT_PASSWORD=${var.root_password}",
         "HTTPSRV=${build.PackerHTTPIP}:${build.PackerHTTPPort}"
     ]
     execute_command   = "{{ .Vars }} sudo -E -S bash '{{ .Path }}'"

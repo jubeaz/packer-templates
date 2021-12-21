@@ -64,7 +64,6 @@ variable "packer_password" {
 
 variable "root_password" {
   type      = string
-  default   = "root"
   sensitive = true
 }
 

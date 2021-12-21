@@ -10,16 +10,17 @@ LANGUAGE=${LANGUAGE:-'en_US.UTF-8'}
 COUNTRY=${COUNTRY:-FR}
 ADDITIONAL_PKGS=${ADDITIONAL_PKGS:-""}
 PACKER_PASSWORD=${PACKER_PASSWORD:-"password"}
+ROOT_PASSWORD=${ROOT_PASSWORD:-"password"}
 
-echo ">>>>>>>>>>>>>>>> IS_UEFI: ${IS_UEFI}"
-echo ">>>>>>>>>>>>>>>> COUNTRY: ${COUNTRY}"
-echo ">>>>>>>>>>>>>>>> ADDITIONAL_PKGS: ${ADDITIONAL_PKGS}"
-echo ">>>>>>>>>>>>>>>> PACKER_PASSWORD: ${PACKER_PASSWORD}"
-echo ">>>>>>>>>>>>>>>> ${FQDN}"
-echo ">>>>>>>>>>>>>>>> ${KEYMAP}"
-echo ">>>>>>>>>>>>>>>> ${LANGUAGE}"
-echo ">>>>>>>>>>>>>>>> ${PACKER_BUILDER_TYPE}"
-echo ">>>>>>>>>>>>>>>> ${HTTPSRV}"
+#echo ">>>>>>>>>>>>>>>> IS_UEFI: ${IS_UEFI}"
+#echo ">>>>>>>>>>>>>>>> COUNTRY: ${COUNTRY}"
+#echo ">>>>>>>>>>>>>>>> ADDITIONAL_PKGS: ${ADDITIONAL_PKGS}"
+#echo ">>>>>>>>>>>>>>>> PACKER_PASSWORD: ${PACKER_PASSWORD}"
+#echo ">>>>>>>>>>>>>>>> ${FQDN}"
+#echo ">>>>>>>>>>>>>>>> ${KEYMAP}"
+#echo ">>>>>>>>>>>>>>>> ${LANGUAGE}"
+#echo ">>>>>>>>>>>>>>>> ${PACKER_BUILDER_TYPE}"
+#echo ">>>>>>>>>>>>>>>> ${HTTPSRV}"
 
 
 TIMEZONE='UTC'
@@ -120,6 +121,8 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   /usr/bin/locale-gen
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating initramfs.."
   /usr/bin/mkinitcpio -p linux
+  echo ">>>> ${CONFIG_SCRIPT_SHORT}: Setting root pasword.."
+  echo "root:$ROOT_PASSWORD" | /usr/bin/chpasswd
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring network.."
   # Disable systemd Predictable Network Interface Names and revert to traditional interface names
   # https://wiki.archlinux.org/index.php/Network_configuration#Revert_to_traditional_interface_names
