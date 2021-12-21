@@ -87,8 +87,6 @@ curl -s "$MIRRORLIST" |  sed 's/^#Server/Server/' > /etc/pacman.d/mirrorlist
 echo ">>>> install-base.sh: Bootstrapping the base installation.."
 /usr/bin/pacstrap ${TARGET_DIR} base base-devel linux
 
-# Need to install netctl as well: https://github.com/archlinux/arch-boxes/issues/70
-# Can be removed when ${ANSIBLE_LOGIN}'s Arch plugin will use systemd-networkd: https://github.com/hashicorp/${ANSIBLE_LOGIN}/pull/11400
 echo ">>>> install-base.sh: Installing basic packages.."
 /usr/bin/arch-chroot ${TARGET_DIR} pacman -S --noconfirm gptfdisk openssh\
     syslinux dhcpcd netctl rsync netplan ${ADDITIONAL_PKGS}
@@ -128,12 +126,12 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   /usr/bin/ln -s /dev/null /etc/udev/rules.d/80-net-setup-link.rules
 
   mkdir /etc/netplan
-  echo "network:" > /etc/netplan/network.yaml
-  echo "  version: 2" >> /etc/netplan/network.yaml
-  echo "  renderer: networkd" >> /etc/netplan/network.yaml
-  echo "  ethernets:" >> /etc/netplan/network.yaml
-  echo "    eth0:" >> /etc/netplan/network.yaml
-  echo "      dhcp4: true" >> /etc/netplan/network.yaml
+  echo "network:" > /etc/netplan/00-installer-config.yaml
+  echo "  version: 2" >> /etc/netplan/00-installer-config.yaml
+  echo "  renderer: networkd" >> /etc/netplan/00-installer-config.yaml
+  echo "  ethernets:" >> /etc/netplan/00-installer-config.yaml
+  echo "    eth0:" >> /etc/netplan/00-installer-config.yaml
+  echo "      dhcp4: true" >> /etc/netplan/00-installer-config.yaml
 
   netplan generate
   netplan appy
@@ -165,16 +163,12 @@ echo ">>>> install-base.sh: Entering chroot and configuring system.."
 /usr/bin/arch-chroot ${TARGET_DIR} ${CONFIG_SCRIPT}
 rm "${TARGET_DIR}${CONFIG_SCRIPT}"
 
-# http://comments.gmane.org/gmane.linux.arch.general/48739
-#echo ">>>> install-base.sh: Adding workaround for shutdown race condition.."
-#/usr/bin/install --mode=0644 /root/poweroff.timer "${TARGET_DIR}/etc/systemd/system/poweroff.timer"
-
 echo ">>>> install-base.sh: Completing installation.."
 /usr/bin/sleep 3
 /usr/bin/umount ${TARGET_DIR}
 # Turning network interfaces down to make sure SSH session was dropped on host.
 # More info at: https://www.packer.io/docs/provisioners/shell.html#handling-reboots
-echo '==> Turning down network interfaces and rebooting'
+#echo '==> Turning down network interfaces and rebooting'
 # for i in $(/usr/bin/netstat -i | /usr/bin/tail +3 | /usr/bin/awk '{print $1}'); do /usr/bin/ip link set ${i} down; done
 /usr/bin/systemctl reboot
 echo ">>>> install-base.sh: Installation complete!"
