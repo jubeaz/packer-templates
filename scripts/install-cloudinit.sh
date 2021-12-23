@@ -12,6 +12,8 @@ echo " >>>>>>>>>>>> ${HTTPSRV}"
 echo " >>>>>>>>>>>> ${DISTRO}"
 cp /etc/cloud/cloud.cfg /etc/cloud/cloud.cfg.save
 /usr/bin/curl -o /etc/cloud/cloud.cfg http://${HTTPSRV}/cloud/cloud.cfg
-/usr/bin/curl -o /etc/cloud/cloud.cfg http://${HTTPSRV}/cloud/hosts.${DISTRO}.tmpl
+/usr/bin/curl -o /etc/cloud/templates/hosts.arch.tmpl http://${HTTPSRV}/cloud/hosts.${DISTRO}.tmpl
 
+cat /etc/cloud/cloud.cfg
+cat /etc/cloud/templates/hosts.arch.tmpl 
 #rm /etc/netplan/network.yaml

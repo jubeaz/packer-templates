@@ -29,7 +29,7 @@ provisioner "shell" {
 
   provisioner "shell" {
     environment_vars =[
-        "HTTPSRV=${build.PackerHTTPIP}:${build.PackerHTTPPort}"
+        "HTTPSRV=${build.PackerHTTPIP}:${build.PackerHTTPPort}",
         "DISTRO=${var.distro}"
     ]
     execute_command = "{{ .Vars }} sudo -E -S bash '{{ .Path }}'"
@@ -46,6 +46,6 @@ provisioner "shell" {
 
   post-processor "vagrant" {
     keep_input_artifact = true
-    output              = "${var.qemu_out_dir}/output/packer_arch_cloud_-${local.version}.01.box"
+    output              = "${var.qemu_out_dir}/vagrant/${local.vm_name}.01.box"
   }
 }

@@ -25,7 +25,7 @@ source "qemu" "archlinux" {
   ssh_password     = "${var.packer_password}"
   ssh_timeout      = "${var.ssh_timeout}"
   ssh_username     = "packer"
-  vm_name          = "${local.vm_name}-cloud.qcow2"
-  output_directory = "${var.qemu_out_dir}/packer"
+  vm_name          = "${local.vm_name}.qcow2"
+  output_directory = "${var.qemu_out_dir}/packer/qemu/${local.vm_name}"
 }
 

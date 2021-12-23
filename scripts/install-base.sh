@@ -90,7 +90,7 @@ echo ">>>> install-base.sh: Bootstrapping the base installation.."
 
 echo ">>>> install-base.sh: Installing basic packages.."
 /usr/bin/arch-chroot ${TARGET_DIR} pacman -S --noconfirm gptfdisk openssh\
-    syslinux dhcpcd netctl rsync netplan ${ADDITIONAL_PKGS}
+    syslinux dhcpcd netctl rsync ${ADDITIONAL_PKGS}
 
 echo ">>>> install-base.sh: Configuring syslinux.."
 /usr/bin/arch-chroot ${TARGET_DIR} syslinux-install_update -i -a -m
@@ -128,16 +128,19 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   # https://wiki.archlinux.org/index.php/Network_configuration#Revert_to_traditional_interface_names
   /usr/bin/ln -s /dev/null /etc/udev/rules.d/80-net-setup-link.rules
 
-  mkdir /etc/netplan
-  echo "network:" > /etc/netplan/00-installer-config.yaml
-  echo "  version: 2" >> /etc/netplan/00-installer-config.yaml
-  echo "  renderer: networkd" >> /etc/netplan/00-installer-config.yaml
-  echo "  ethernets:" >> /etc/netplan/00-installer-config.yaml
-  echo "    eth0:" >> /etc/netplan/00-installer-config.yaml
-  echo "      dhcp4: true" >> /etc/netplan/00-installer-config.yaml
+  cp /etc/netctl/examples/ethernet-dhcp /etc/netctl/eth0
+  netctl enable eth0
 
-  netplan generate
-  netplan appy
+#  mkdir /etc/netplan
+#  echo "network:" > /etc/netplan/00-installer-config.yaml
+#  echo "  version: 2" >> /etc/netplan/00-installer-config.yaml
+#  echo "  renderer: networkd" >> /etc/netplan/00-installer-config.yaml
+#  echo "  ethernets:" >> /etc/netplan/00-installer-config.yaml
+#  echo "    eth0:" >> /etc/netplan/00-installer-config.yaml
+#  echo "      dhcp4: true" >> /etc/netplan/00-installer-config.yaml
+
+#  netplan generate
+#  netplan appy
   /usr/bin/systemctl enable systemd-networkd
   /usr/bin/systemctl enable systemd-resolved
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sshd.."

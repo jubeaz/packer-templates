@@ -107,7 +107,6 @@ variable "headless" {
 }
 variable "shutdown_command" {
   type    = string
-  default = "sudo systemctl start poweroff.timer"
 }
 
 variable "ssh_timeout" {
@@ -136,6 +135,6 @@ locals {
   iso_checksum_url = "${local.iso_base_url}/sha1sums.txt"
   iso_url          = "${local.iso_base_url}/archlinux-${local.version}.01-x86_64.iso"
   version          = "${legacy_isotime("2006.01")}"
-  vm_name          = "${var.distro}-${local.version}"
+  vm_name          = "${var.distro}-archlinux-${local.version}"
 }
 
