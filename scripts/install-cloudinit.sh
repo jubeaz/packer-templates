@@ -9,11 +9,13 @@ systemctl enable cloud-config.service
 systemctl enable cloud-final.service
 
 echo " >>>>>>>>>>>> ${HTTPSRV}"
-echo " >>>>>>>>>>>> ${DISTRO}"
 cp /etc/cloud/cloud.cfg /etc/cloud/cloud.cfg.save
 /usr/bin/curl -o /etc/cloud/cloud.cfg http://${HTTPSRV}/cloud/cloud.cfg
-/usr/bin/curl -o /etc/cloud/templates/hosts.arch.tmpl http://${HTTPSRV}/cloud/hosts.${DISTRO}.tmpl
+
+mv /tmp/hosts.arch.tmpl /etc/cloud/templates/hosts.arch.tmpl
+#mv /tmp/timesyncd.conf.tmpl /etc/cloud/templates/timesyncd.conf.tmpl
 
 cat /etc/cloud/cloud.cfg
 cat /etc/cloud/templates/hosts.arch.tmpl 
-#rm /etc/netplan/network.yaml
+rm /etc/netctl/eth0
+netctl disable eth0

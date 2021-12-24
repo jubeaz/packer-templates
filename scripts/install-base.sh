@@ -4,19 +4,18 @@
 set -eu
 
 IS_UEFI=${IS_UEFI:-false}
-FQDN=${FQDN:-'arch'}
+HOSTNAME=${HOSTNAME:-'arch'}
 KEYMAP=${KEYMAP:-'fr-latin1'}
 LANGUAGE=${LANGUAGE:-'en_US.UTF-8'}
 COUNTRY=${COUNTRY:-FR}
 ADDITIONAL_PKGS=${ADDITIONAL_PKGS:-""}
 PACKER_PASSWORD=${PACKER_PASSWORD:-"password"}
-ROOT_PASSWORD=${ROOT_PASSWORD:-"password"}
 
 #echo ">>>>>>>>>>>>>>>> IS_UEFI: ${IS_UEFI}"
 #echo ">>>>>>>>>>>>>>>> COUNTRY: ${COUNTRY}"
 #echo ">>>>>>>>>>>>>>>> ADDITIONAL_PKGS: ${ADDITIONAL_PKGS}"
 #echo ">>>>>>>>>>>>>>>> PACKER_PASSWORD: ${PACKER_PASSWORD}"
-#echo ">>>>>>>>>>>>>>>> ${FQDN}"
+#echo ">>>>>>>>>>>>>>>> ${HOSTNAME}"
 #echo ">>>>>>>>>>>>>>>> ${KEYMAP}"
 #echo ">>>>>>>>>>>>>>>> ${LANGUAGE}"
 #echo ">>>>>>>>>>>>>>>> ${PACKER_BUILDER_TYPE}"
@@ -90,7 +89,7 @@ echo ">>>> install-base.sh: Bootstrapping the base installation.."
 
 echo ">>>> install-base.sh: Installing basic packages.."
 /usr/bin/arch-chroot ${TARGET_DIR} pacman -S --noconfirm gptfdisk openssh\
-    syslinux dhcpcd netctl rsync ${ADDITIONAL_PKGS}
+    syslinux dhcpcd netctl rsync ufw ${ADDITIONAL_PKGS}
 
 echo ">>>> install-base.sh: Configuring syslinux.."
 /usr/bin/arch-chroot ${TARGET_DIR} syslinux-install_update -i -a -m
@@ -113,7 +112,7 @@ echo ">>>> install-base.sh: Generating the system configuration script.."
 CONFIG_SCRIPT_SHORT=`basename "$CONFIG_SCRIPT"`
 cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring hostname, timezone, and keymap.."
-  echo '${FQDN}' > /etc/hostname
+  echo '${HOSTNAME}' > /etc/hostname
   /usr/bin/ln -s /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
   echo 'KEYMAP=${KEYMAP}' > /etc/vconsole.conf
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring locale.."
@@ -121,8 +120,6 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   /usr/bin/locale-gen
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Creating initramfs.."
   /usr/bin/mkinitcpio -p linux
-  echo ">>>> ${CONFIG_SCRIPT_SHORT}: Setting root pasword.."
-  echo "root:$ROOT_PASSWORD" | /usr/bin/chpasswd
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring network.."
   # Disable systemd Predictable Network Interface Names and revert to traditional interface names
   # https://wiki.archlinux.org/index.php/Network_configuration#Revert_to_traditional_interface_names
@@ -130,19 +127,10 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
 
   cp /etc/netctl/examples/ethernet-dhcp /etc/netctl/eth0
   netctl enable eth0
-
-#  mkdir /etc/netplan
-#  echo "network:" > /etc/netplan/00-installer-config.yaml
-#  echo "  version: 2" >> /etc/netplan/00-installer-config.yaml
-#  echo "  renderer: networkd" >> /etc/netplan/00-installer-config.yaml
-#  echo "  ethernets:" >> /etc/netplan/00-installer-config.yaml
-#  echo "    eth0:" >> /etc/netplan/00-installer-config.yaml
-#  echo "      dhcp4: true" >> /etc/netplan/00-installer-config.yaml
-
-#  netplan generate
-#  netplan appy
+  
   /usr/bin/systemctl enable systemd-networkd
   /usr/bin/systemctl enable systemd-resolved
+
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Configuring sshd.."
   /usr/bin/sed -i 's/#UseDNS yes/UseDNS no/' /etc/ssh/sshd_config
   /usr/bin/systemctl enable sshd.service

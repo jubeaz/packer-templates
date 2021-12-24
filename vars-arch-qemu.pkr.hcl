@@ -9,18 +9,20 @@ variable "is_uefi" {
 
 variable "packer_build_type" {
   type    = string
+  default = "qemu"
 }
 
 variable "write_zeros" {
   type    = string
-  default = "true"
+  default = "false"
 }
 
 # #################
-#
+# TEMPLATE VARS
 # #################
 variable "arch_add_pkgs" {
   type    = string
+  default = ""
 }
 
 variable "country" {
@@ -28,7 +30,7 @@ variable "country" {
   default = "FR"
 }
 
-variable "fqdn" {
+variable "hostname" {
   type    = string
   default = "Archlinux"
 }
@@ -42,18 +44,10 @@ variable "language" {
   type    = string
   default = "en_US.UTF-8"
 }
-variable "distro" {
+
+variable "template_name" {
   type    = string
   default = "arch"
-}
-
-
-# #################
-# USER INFO
-# #################
-variable "with_vagrant" {
-  type    = string
-  default = "False"
 }
 
 variable "packer_password" {
@@ -62,24 +56,38 @@ variable "packer_password" {
   sensitive = true
 }
 
-variable "root_password" {
-  type      = string
-  sensitive = true
-}
+# #################
+# CLOUD-INIT VARS
+# #################
 
 variable "ansible_login" {
   type      = string
   sensitive = true
 }
 
-variable "ansible_password" {
+variable "ansible_key" {
   type      = string
   sensitive = true
 }
 
+variable "ufw_allow_ssh_ip" {
+  type      = string
+  sensitive = true
+}
 
+variable "ntp_pools" {
+  type      = string
+  sensitive = false
+  default   = "0.arch.pool.ntp.org, 1.arch.pool.ntp.org, 2.arch.pool.ntp.org, 3.arch.pool.ntp.org"
+}
+
+variable "locale" {
+  type      = string
+  sensitive = false
+  default   = "en_US"
+}
 # #################
-#  VM DATA
+#  VM VARS
 # #################
 
 variable "cpu" {
@@ -98,7 +106,7 @@ variable "disk_size" {
 }
 
 # #################
-#  VM DATA
+#  BUILD VARS
 # #################
 
 variable "headless" {
@@ -107,18 +115,13 @@ variable "headless" {
 }
 variable "shutdown_command" {
   type    = string
+  default = "sudo shutdown now"
 }
 
 variable "ssh_timeout" {
   type    = string
   default = "20m"
 }
-
-variable "name" {
-  type    = string
-  default = "archlinux"
-}
-
 
 variable "qemu_out_dir" {
   type    = string
@@ -130,11 +133,10 @@ variable "qemu_out_dir" {
 # Read the documentation for locals blocks here:
 # https://www.packer.io/docs/templates/hcl_templates/blocks/locals
 locals {
-  _packer_password = "${uuidv4()}"
+  version          = "${legacy_isotime("2006.01")}"
   iso_base_url     = "https://mirrors.kernel.org/archlinux/iso/${local.version}.01"
   iso_checksum_url = "${local.iso_base_url}/sha1sums.txt"
   iso_url          = "${local.iso_base_url}/archlinux-${local.version}.01-x86_64.iso"
-  version          = "${legacy_isotime("2006.01")}"
-  vm_name          = "${var.distro}-archlinux-${local.version}"
+  vm_name          = "${var.template_name}-archlinux-${local.version}"
 }
 

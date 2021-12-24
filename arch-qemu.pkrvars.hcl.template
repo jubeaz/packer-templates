@@ -1,0 +1,18 @@
+packer_password     = "packer"
+ansible_login       = "ansible"
+ansible_key         = ""
+arch_add_pkgs       = "vim python python-cryptography apparmor"
+country             = "FR"
+is_uefi             = "false"
+template_name       = "mytemplate"
+ufw_allow_ssh_ip    = "10.8.2.0/24"
+ntp_pools           = "0.arch.pool.ntp.org, 1.arch.pool.ntp.org, 2.arch.pool.ntp.org, 3.arch.pool.ntp.org"
+locale              = "en_US"
+
+cpu                 = "2"
+ram                 = "2048"
+disk_size           = "20480"
+headless            = "false"
+
+qemu_out_dir        = "/var/lib/libvirt/"
+packer_build_type   = "qemu"

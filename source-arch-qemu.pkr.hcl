@@ -15,7 +15,20 @@ source "qemu" "archlinux" {
   disk_size        = "${var.disk_size}"
   format           = "qcow2"
   headless         = "${var.headless}"
-  http_directory   = "srv"
+  http_content     = {
+     "/cloud/cloud.cfg" = templatefile(
+                     "${path.root}/srv/cloud/cloud.cfg.pkrtpl", 
+                     {
+                       ansible_login = "${var.ansible_login}"
+                       ansible_key = "${var.ansible_key}"
+                       ufw_allow_ssh_ip = "${var.ufw_allow_ssh_ip}"
+                       ntp_pools = "${var.ntp_pools}"
+                       locale = "${var.locale}"
+                     }
+                   )
+    "/enable-ssh.sh" = file("srv/enable-ssh.sh")
+  }
+#  http_directory   = "srv"
   iso_checksum     = "file:${local.iso_checksum_url}"
   iso_url          = "${local.iso_url}"
   memory           = "${var.ram}"

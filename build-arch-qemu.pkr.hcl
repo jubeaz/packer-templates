@@ -9,17 +9,25 @@ provisioner "shell" {
         "IS_UEFI=${var.is_uefi}",
         "COUNTRY=${var.country}",
         "ADDITIONAL_PKGS=${var.arch_add_pkgs}",
-        "FQDN=${var.fqdn}",
+        "HOSTNAME=${var.hostname}",
         "KEYMAP=${var.keymap}",
         "LANGUAGE=${var.language}",
         "PACKER_PASSWORD=${var.packer_password}",
-        "ROOT_PASSWORD=${var.root_password}",
-        "HTTPSRV=${build.PackerHTTPIP}:${build.PackerHTTPPort}"
     ]
     execute_command   = "{{ .Vars }} sudo -E -S bash '{{ .Path }}'"
     expect_disconnect = true
     script            = "scripts/install-base.sh"
   }
+
+  provisioner "file" {
+    source = "srv/cloud/hosts.arch.tmpl"
+    destination = "/tmp/hosts.arch.tmpl"
+  }
+  
+#  provisioner "file" {
+#    source = "srv/cloud/timesyncd.conf.tmpl"
+#    destination = "/tmp/timesyncd.conf.tmpl"
+#  }
 
   provisioner "shell" {
     execute_command = "{{ .Vars }} sudo -E -S bash '{{ .Path }}'"
@@ -29,8 +37,7 @@ provisioner "shell" {
 
   provisioner "shell" {
     environment_vars =[
-        "HTTPSRV=${build.PackerHTTPIP}:${build.PackerHTTPPort}",
-        "DISTRO=${var.distro}"
+        "HTTPSRV=${build.PackerHTTPIP}:${build.PackerHTTPPort}"
     ]
     execute_command = "{{ .Vars }} sudo -E -S bash '{{ .Path }}'"
     only            = ["qemu.archlinux"]
@@ -42,10 +49,5 @@ provisioner "shell" {
     ]
     execute_command = "{{ .Vars }} sudo -E -S bash '{{ .Path }}'"
     script          = "scripts/cleanup.sh"
-  }
-
-  post-processor "vagrant" {
-    keep_input_artifact = true
-    output              = "${var.qemu_out_dir}/vagrant/${local.vm_name}.01.box"
   }
 }
