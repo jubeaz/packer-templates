@@ -19,22 +19,17 @@ provisioner "shell" {
     script            = "scripts/install-base.sh"
   }
 
-  provisioner "file" {
-    source = "srv/cloud/hosts.arch.tmpl"
-    destination = "/tmp/hosts.arch.tmpl"
-  }
-  
-#  provisioner "file" {
-#    source = "srv/cloud/timesyncd.conf.tmpl"
-#    destination = "/tmp/timesyncd.conf.tmpl"
-#  }
-
   provisioner "shell" {
     execute_command = "{{ .Vars }} sudo -E -S bash '{{ .Path }}'"
     only            = ["qemu.archlinux"]
     script          = "scripts/install-qemu.sh"
   }
 
+  provisioner "file" {
+    source = "srv/cloud/hosts.arch.tmpl"
+    destination = "/tmp/hosts.arch.tmpl"
+  }
+  
   provisioner "shell" {
     environment_vars =[
         "HTTPSRV=${build.PackerHTTPIP}:${build.PackerHTTPPort}"

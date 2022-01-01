@@ -31,6 +31,18 @@ source "qemu" "archlinux" {
 #  http_directory   = "srv"
   iso_checksum     = "file:${local.iso_checksum_url}"
   iso_url          = "${local.iso_url}"
+#  firmware         = "UEFI"
+#  qemuargs         = [
+#    [ "-bios", "/usr/share/OVMF/x64/OVMF.fd" ],
+#    [ "-device", "virtio-blk-pci,drive=drive0,bootindex=0" ],
+#    [ "-device", "virtio-blk-pci,drive=cdrom0,bootindex=1" ],
+#    [ "-drive", "if=pflash,format=raw,readonly,file=/usr/share/OVMF/OVMF_CODE.secboot.fd" ],
+#    [ "-drive", "if=pflash,format=raw,readonly,file=/usr/share/OVMF/OVMF_VARS.fd" ],
+#    [ "-drive", "if=none,file=output/disk.raw,cache=writeback,discard=ignore,format=raw,id=drive0" ],
+#    [ "-drive", "if=none,file=packer_cache/a4672833d0d89d9d9953d44436c44a32e50994ed.iso,media=cdrom,id=cdrom0" ],
+#    [ "-boot", "order=c,once=d,menu=on,strict=on" ]
+#  ]
+  machine_type     = "q35"
   memory           = "${var.ram}"
   net_device       = "virtio-net"
   qemu_binary      = "qemu-system-x86_64"
@@ -39,6 +51,6 @@ source "qemu" "archlinux" {
   ssh_timeout      = "${var.ssh_timeout}"
   ssh_username     = "packer"
   vm_name          = "${local.vm_name}.qcow2"
-  output_directory = "${var.qemu_out_dir}/packer/qemu/${local.vm_name}"
+  output_directory = "${var.qemu_out_dir}/${local.vm_name}"
 }
 
