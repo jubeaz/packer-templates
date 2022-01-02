@@ -133,6 +133,7 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   pacman -S --noconfirm dhcpcd
   pacman -S --noconfirm ufw
   pacman -S --noconfirm apparmor
+  pacman -S --noconfirm firejail
   pacman -S --noconfirm ${ADDITIONAL_PKGS}
   if [ "${IS_UEFI}" != "false" ] ; then
     echo ">>>> ${CONFIG_SCRIPT_SHORT}: Insatll grub EFI packages"
@@ -171,7 +172,7 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
 
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: apply netplan config "
   netplan generate
-  netplan appy
+  netplan apply
   
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: enable networked and resolved"
   /usr/bin/systemctl enable systemd-networkd
@@ -190,6 +191,11 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   /usr/bin/pacman -S --noconfirm rng-tools
   /usr/bin/systemctl enable rngd
 
+# #######################################
+# Apparmor
+# #######################################
+
+  systemctl enable apparmor
 
 # #######################################
 # Packer user
