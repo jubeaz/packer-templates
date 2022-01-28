@@ -45,6 +45,7 @@ source "qemu" "archlinux" {
   machine_type     = "q35"
   memory           = "${var.ram}"
   net_device       = "virtio-net"
+#  net_device       = "virtio-net-pci"
   qemu_binary      = "qemu-system-x86_64"
   shutdown_command = "${var.shutdown_command}"
   ssh_password     = "${var.packer_password}"

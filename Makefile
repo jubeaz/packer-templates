@@ -8,3 +8,4 @@ validate:
 
 build:
 	packer build -on-error=ask -timestamp-ui -var-file $(VARFILE) .
+

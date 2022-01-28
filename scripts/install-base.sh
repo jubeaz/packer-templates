@@ -127,6 +127,7 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
 
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Installing basic packages."
   pacman -S --noconfirm gptfdisk
+  pacman -S --noconfirm bash-completion
   pacman -S --noconfirm openssh
   pacman -S --noconfirm rsync
   pacman -S --noconfirm netplan
@@ -134,6 +135,9 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   pacman -S --noconfirm ufw
   pacman -S --noconfirm apparmor
   pacman -S --noconfirm firejail
+  pacman -S --noconfirm libpwquality
+  pacman -S --noconfirm rkhunter
+  pacman -S --no-confirm arch-audit
   pacman -S --noconfirm ${ADDITIONAL_PKGS}
   if [ "${IS_UEFI}" != "false" ] ; then
     echo ">>>> ${CONFIG_SCRIPT_SHORT}: Insatll grub EFI packages"
@@ -196,6 +200,36 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
 # #######################################
 
   systemctl enable apparmor
+
+# #######################################
+# Hardening
+# #######################################
+  /usr/bin/sed -i 's/umask 022/umask 027/' /etc/profile
+  # Disable core dumps
+  echo  '* hard core 0' >> /etc/security/limits.conf
+
+  /usr/bin/sed -i 's/PASS_MAX_DAYS	99999/PASS_MAX_DAYS 183/' /etc/login.defs
+  /usr/bin/sed -i 's/PASS_MAX_DAYS	0/PASS_MAX_DAYS 1/' /etc/login.defs
+  /usr/bin/sed -i 's/PASS_WARN_AGE	0/PASS_WARN_AGE 15/' /etc/login.defs
+  echo 'SHA_CRYPT_MIN_ROUNDS 5000' >> /etc/login.defs
+
+  # Harden passwords 
+  /usr/bin/sed -i 's/^password/#password/' /etc/pam.d/passwd
+  echo 'password required pam_pwquality.so retry=2 minlen=10 difok=6 dcredit=-1 ucredit=-1 ocredit=-1 lcredit=-1 [badwords=myservice mydomain] enforce_for_root' >> /etc/pam.d/passwd
+  echo 'password required pam_unix.so use_authtok sha512 shadow' >> /etc/pam.d/passwd
+ 
+  # Disable uncommon protocols
+  echo "blacklist dccp" >> /etc/modprobe.d/local-dontload.conf
+  echo "install dccp /bin/true" >> /etc/modprobe.d/local-dontload.conf
+  echo "blacklist sctp" >> /etc/modprobe.d/local-dontload.conf
+  echo "install sctp /bin/true" >> /etc/modprobe.d/local-dontload.conf
+  echo "blacklist rds" >> /etc/modprobe.d/local-dontload.conf
+  echo "install rds /bin/true" >> /etc/modprobe.d/local-dontload.conf
+  echo "blacklist tipc" >> /etc/modprobe.d/local-dontload.conf
+  echo "install tipc /bin/true" >> /etc/modprobe.d/local-dontload.conf
+
+  rkhunter --propupd
+  
 
 # #######################################
 # Packer user
