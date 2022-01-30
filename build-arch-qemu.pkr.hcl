@@ -7,7 +7,7 @@ provisioner "shell" {
     environment_vars =[
         "PACKER_BUILDER_TYPE=${var.packer_build_type}",
         "IS_UEFI=${var.is_uefi}",
-        "COUNTRY=${var.country}",
+        "COUNTRIES=${var.countries}",
         "ADDITIONAL_PKGS=${var.arch_add_pkgs}",
         "HOSTNAME=${var.hostname}",
         "KEYMAP=${var.keymap}",

@@ -25,9 +25,9 @@ variable "arch_add_pkgs" {
   default = ""
 }
 
-variable "country" {
+variable "countries" {
   type    = string
-  default = "FR"
+  default = "France"
 }
 
 variable "hostname" {

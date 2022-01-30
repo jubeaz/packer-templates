@@ -8,20 +8,11 @@ WITH_WIFI=${WITH_WIFI:-false}
 HOSTNAME=${HOSTNAME:-'arch'}
 KEYMAP=${KEYMAP:-'fr-latin1'}
 LANGUAGE=${LANGUAGE:-'en_US.UTF-8'}
-COUNTRY=${COUNTRY:-FR}
+COUNTRIES=${COUNTRIES:-France,Germany}
 ADDITIONAL_PKGS=${ADDITIONAL_PKGS:-""}
 PACKER_PASSWORD=${PACKER_PASSWORD:-"password"}
-UEFI_PART=${UEFI_PART:-FR}
 
 
-echo ">>>>>>>>>>>>>>>> IS_UEFI: ${IS_UEFI}"
-echo ">>>>>>>>>>>>>>>> COUNTRY: ${COUNTRY}"
-echo ">>>>>>>>>>>>>>>> ADDITIONAL_PKGS: ${ADDITIONAL_PKGS}"
-echo ">>>>>>>>>>>>>>>> PACKER_PASSWORD: ${PACKER_PASSWORD}"
-echo ">>>>>>>>>>>>>>>> ${HOSTNAME}"
-echo ">>>>>>>>>>>>>>>> ${KEYMAP}"
-echo ">>>>>>>>>>>>>>>> ${LANGUAGE}"
-echo ">>>>>>>>>>>>>>>> ${PACKER_BUILDER_TYPE}"
 
 
 TIMEZONE='UTC'
@@ -35,9 +26,20 @@ else
 fi
 
 ROOT_PARTITION="${DISK}1"
+UEFI_PART="${DISK}1"
 
-MIRRORLIST="https://archlinux.org/mirrorlist/?country=${COUNTRY}&protocol=http&protocol=https&ip_version=4&use_mirror_status=on"
-
+echo ">>>>>>>>>>>>>>>> IS_UEFI: ${IS_UEFI}"
+echo ">>>>>>>>>>>>>>>> COUNTRIES: ${COUNTRIES}"
+echo ">>>>>>>>>>>>>>>> ADDITIONAL_PKGS: ${ADDITIONAL_PKGS}"
+echo ">>>>>>>>>>>>>>>> PACKER_PASSWORD: ${PACKER_PASSWORD}"
+echo ">>>>>>>>>>>>>>>> HOTNAME: ${HOSTNAME}"
+echo ">>>>>>>>>>>>>>>> KEYMAP: ${KEYMAP}"
+echo ">>>>>>>>>>>>>>>> LANGUAGE: ${LANGUAGE}"
+echo ">>>>>>>>>>>>>>>> PACKER_BUILD_TYPE: ${PACKER_BUILDER_TYPE}"
+echo ">>>>>>>>>>>>>>>> TIMEZONE: ${TIMEZONE}"
+echo ">>>>>>>>>>>>>>>> DISK: ${DISK}"
+echo ">>>>>>>>>>>>>>>> ROOT_PARTITION: ${ROOT_PARTITION}"
+echo ">>>>>>>>>>>>>>>> UEFI_PART: ${UEFI_PART}"
 # #######################################
 # 
 # DISK MANAGEMENT
@@ -85,11 +87,15 @@ echo ">>>> install-base.sh: Mounting ${ROOT_PARTITION} to ${TARGET_DIR}.."
 #
 # #######################################
 
-echo ">>>> install-base.sh: Setting pacman ${COUNTRY} mirrors.."
-curl -s "$MIRRORLIST" |  sed 's/^#Server/Server/' > /etc/pacman.d/mirrorlist
+echo ">>>> install-base.sh: Setting pacman ${COUNTRIES} mirrors.."
+/usr/bin/reflector --verbose  --country ${COUNTRIES} --latest 5 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 
 echo ">>>> install-base.sh: Bootstrapping the base installation.."
 /usr/bin/pacstrap ${TARGET_DIR} base base-devel linux-lts lvm2 linux-firmware
+
+
+echo ">>>> install-base.sh: Copy mirror list.."
+/usr/bin/cp /etc/pacman.d/mirrorlist "${TARGET_DIR}/etc/pacman.d"
 
 echo ">>>> install-base.sh: Generating the filesystem table.."
 /usr/bin/genfstab -p ${TARGET_DIR} >> "${TARGET_DIR}/etc/fstab"
@@ -128,6 +134,7 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: Installing basic packages."
   pacman -S --noconfirm gptfdisk
   pacman -S --noconfirm bash-completion
+  pacman -S --noconfitm reflector
   pacman -S --noconfirm openssh
   pacman -S --noconfirm rsync
   pacman -S --noconfirm netplan
@@ -181,6 +188,19 @@ cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
   echo ">>>> ${CONFIG_SCRIPT_SHORT}: enable networked and resolved"
   /usr/bin/systemctl enable systemd-networkd
   /usr/bin/systemctl enable systemd-resolved
+
+# #######################################
+# reflector
+# #######################################
+echo "" > /etc/xdg/reflector/reflector.conf
+echo "--save /etc/pacman.d/mirrorlist" >> /etc/xdg/reflector/reflector.conf
+echo "--protocol https" >> /etc/xdg/reflector/reflector.conf
+echo "--country ${COUNTRIES}" >> /etc/xdg/reflector/reflector.conf
+echo "--latest 5" >> /etc/xdg/reflector/reflector.conf
+echo "--sorte rate" >> /etc/xdg/reflector/reflector.conf
+
+/usr/bin/systemctl enable reflector.service
+/usr/bin/systemctl enable reflector.timer
 
 # #######################################
 # sshd
