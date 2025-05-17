@@ -2,14 +2,13 @@
 # #################
 # DISK INFO
 # #################
-variable "is_uefi" {
-  type    = string
-  default = "false"
-}
+#variable "is_uefi" {
+#  type    = string
+#  default = "false"
+#}
 
-variable "packer_build_type" {
+variable "build_type" {
   type    = string
-  default = "qemu"
 }
 
 variable "write_zeros" {
@@ -35,14 +34,19 @@ variable "hostname" {
   default = "Archlinux"
 }
 
-variable "keymap" {
+variable "domain" {
   type    = string
-  default = "fr-latin1"
+  default = "local"
 }
 
-variable "language" {
+variable "keymap" {
   type    = string
-  default = "en_US.UTF-8"
+  default = "fr"
+}
+
+variable "locale" {
+  type    = string
+  default = "fr_FR.UTF-8"
 }
 
 variable "template_name" {
@@ -50,10 +54,16 @@ variable "template_name" {
   default = "arch"
 }
 
+variable "packer_user" {
+  type      = string
+  default   = "packer"
+  sensitive = false
+}
+
 variable "packer_password" {
   type      = string
   default   = "packer"
-  sensitive = true
+  sensitive = false
 }
 
 # #################
@@ -65,10 +75,15 @@ variable "ansible_login" {
   sensitive = true
 }
 
-variable "ansible_key" {
+variable "ansible_password" {
   type      = string
   sensitive = true
 }
+
+#variable "ansible_key" {
+#  type      = string
+#  sensitive = true
+#}
 
 variable "ufw_allow_ssh_ip" {
   type      = string
@@ -81,11 +96,6 @@ variable "ntp_pools" {
   default   = "0.arch.pool.ntp.org, 1.arch.pool.ntp.org, 2.arch.pool.ntp.org, 3.arch.pool.ntp.org"
 }
 
-variable "locale" {
-  type      = string
-  sensitive = false
-  default   = "en_US"
-}
 # #################
 #  VM VARS
 # #################
@@ -122,21 +132,3 @@ variable "ssh_timeout" {
   type    = string
   default = "20m"
 }
-
-variable "qemu_out_dir" {
-  type    = string
-}
-# The "legacy_isotime" function has been provided for backwards compatability, but we recommend switching to the timestamp and formatdate functions.
-
-# All locals variables are generated from variables that uses expressions
-# that are not allowed in HCL2 variables.
-# Read the documentation for locals blocks here:
-# https://www.packer.io/docs/templates/hcl_templates/blocks/locals
-locals {
-  version          = "${legacy_isotime("2006.01")}"
-  iso_base_url     = "https://mirrors.kernel.org/archlinux/iso/${local.version}.01"
-  iso_checksum_url = "${local.iso_base_url}/sha1sums.txt"
-  iso_url          = "${local.iso_base_url}/archlinux-${local.version}.01-x86_64.iso"
-  vm_name          = "${var.template_name}-archlinux-${local.version}"
-}
-

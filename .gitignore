@@ -1,3 +1,1 @@
-output*
-*.pkrvars.hcl
-srv/cloud/templates
+archlinux/boxes/*

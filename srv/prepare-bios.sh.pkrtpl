@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -eu
+
+packer() {
+    export HAS_SWAP='true'
+    export SWAP_LV="/dev/${tpl_vg}/swap"
+    export IS_ENCRYPTED='false'
+    export ENCRYPT_PART=''
+    export ENCRYPT_VG=''
+    export ENCRYPT_LV_ROOT=''
+    export WITH_WIFI="false"
+    export IS_UEFI='false'
+    export IS_UEFI_REMOVABLE='false'
+    export GRUB_PART="${tpl_disk}"
+
+    export ADDITIONAL_PKGS="${tpl_extra_pkgs}"
+    export DOMAINE_NAME="${tpl_domain}"
+    export ANSIBLE_LOGIN="${tpl_ansible_login}"
+    export ANSIBLE_PASSWORD="${tpl_ansible_password}"
+    export KEYMAP="${tpl_keymap}"
+    export LOCALE="${tpl_locale}"
+    export COUNTRIES="${tpl_countries}"
+
+    echo ">>>> prepae.sh: partitionning..."
+    sfdisk --force ${tpl_disk}  << PARTITION
+label: dos
+device: ${tpl_disk}
+unit: sectors
+sector-size: 512
+
+/dev/sda1 : start= 2048, size= 1, type=83, bootable
+
+PARTITION
+
+    echo ">>>> prepae.sh: Setting ${tpl_disk} extend partition to max disk"
+    parted ${tpl_disk} resizepart 1 100%
+
+    echo ">>>> prepae.sh: creating filesystems..."
+    pvcreate ${tpl_disk}1
+    vgcreate ${tpl_vg} ${tpl_disk}1
+    lvcreate -L 4G ${tpl_vg} -n swap
+    lvcreate -l 100%FREE ${tpl_vg} -n root
+    mkswap /dev/${tpl_vg}/swap
+    mkfs.ext4 /dev/${tpl_vg}/root
+    modprobe dm_mod
+    vgscan
+    vgchange -ay
+
+    echo ">>>> prepae.sh: mounting..."
+    mount /dev/${tpl_vg}/root /mnt
+}
+
+if [ "$1" == "--packer" ];then
+        packer
+else
+	echo ">>>> prepae.sh: Error unknown host..."
+fi

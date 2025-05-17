@@ -1,4 +1,12 @@
-#!/usr/bin/bash -x
+#!/usr/bin/env bash
+
+# stop on errors
+set -eu
+
+TARGET_DIR='/mnt'
+CONFIG_SCRIPT='/root/arch-config.sh'
+CONFIG_SCRIPT_SHORT=`basename "$CONFIG_SCRIPT"`
+cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
 
 # Clean the pacman cache.
 echo ">>>> cleanup.sh: Cleaning pacman cache.."
@@ -7,9 +15,14 @@ echo ">>>> cleanup.sh: Cleaning pacman cache.."
 # Write zeros to improve virtual disk compaction.
 if [[ $WRITE_ZEROS == "true" ]]; then
   echo ">>>> cleanup.sh: Writing zeros to improve virtual disk compaction.."
-  zerofile=$(/usr/bin/mktemp /zerofile.XXXXX)
-  /usr/bin/dd if=/dev/zero of="$zerofile" bs=1M
-  /usr/bin/rm -f "$zerofile"
+  zerofile=
+  /usr/bin/dd if=/dev/zero of=/tmp/zerofile.XXXXX bs=1M
+  /usr/bin/rm -f /tmp/zerofile.XXXXX
+  ls /tmp
   /usr/bin/sync
 fi
 
+EOF
+
+echo ">>>> cleanup.sh: Entering chroot and configuring system.."
+/usr/bin/arch-chroot ${TARGET_DIR} ${CONFIG_SCRIPT}
