@@ -1,7 +1,5 @@
 [Match]
-Name=en*
 Name=eth*
-
 
 [Link]
 RequiredForOnline=routable
