@@ -1,6 +1,7 @@
 
 source "virtualbox-iso" "archlinux-uefi" {
-  output_directory     = "${var.template_name}-${var.build_type}-${local.version}"
+  output_directory     = "${local.output_directory}"
+  #output_directory     = "${var.template_name}-${var.build_type}-${var.archiso_verion}"
   guest_os_type        = "ArchLinux_64"
   iso_url              = "${local.iso_url}"
   iso_checksum         = "file:${local.iso_checksum_url}"
@@ -34,7 +35,7 @@ source "virtualbox-iso" "archlinux-uefi" {
   guest_additions_mode = "disable"
   headless             = "${var.headless}"
   #http_directory       = "srv"
-  vm_name              = "${var.template_name}-${var.build_type}"
+  vm_name              = "${local.vm_name}"
   http_content     = {
 #    "/enable-ssh.sh" = file("srv/enable-ssh.sh")
      "/enable-ssh.sh" = templatefile(
@@ -71,7 +72,8 @@ source "virtualbox-iso" "archlinux-uefi" {
 }
 
 source "virtualbox-iso" "archlinux-bios" {
-  output_directory     = "${var.template_name}-${var.build_type}-${local.version}"
+  #output_directory     = "${var.template_name}-${var.build_type}-${var.archiso_verion}"
+  output_directory     = "${local.output_directory}"
   guest_os_type        = "ArchLinux_64"
   iso_url              = "${local.iso_url}"
   iso_checksum         = "file:${local.iso_checksum_url}"
