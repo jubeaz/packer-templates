@@ -13,6 +13,6 @@ hostname            = "packer"
 
 cpu                 = "2"
 ram                 = "2048"
-disk_size           = "60000"
+disk_size           = "100000"
 headless            = "true"
 build_type          = "efi"
