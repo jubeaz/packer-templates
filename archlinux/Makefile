@@ -10,7 +10,7 @@ qemu-bios:
 	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-$(VERSION)
 
 virtualbox-bios:
-	$(MAKE) build HYPERVISOR=virtualbox  BOXNAME= virtualbox-jubeaz-bios-archlinux-x86_64 VARFILE=arch-virtualbox-bios.pkrvars.hcl TARGET=irtualbox-iso.archlinux-bios
+	$(MAKE) build HYPERVISOR=virtualbox  BOXNAME= virtualbox-jubeaz-bios-archlinux-x86_64 VARFILE=arch-virtualbox-bios.pkrvars.hcl TARGET=virtualbox-iso.archlinux-bios
 	$(MAKE) deploy BOXNAME=virtualbox-jubeaz-bios-archlinux-x86_64
 
 validate:

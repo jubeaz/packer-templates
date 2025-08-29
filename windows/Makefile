@@ -6,8 +6,8 @@ init:
 	packer plugins install github.com/hashicorp/vagrant
 	
 qemu-bios-windows-2022:
-	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-bios-windows-2022 VARFILE=windows-qemu-bios-windows-2022.pkrvars.hcl TARGET=qemu.windows-2022-bios
-	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-windows-2022
+	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-bios-w-$(VERSION) VARFILE=windows-qemu-bios-windows-2022.pkrvars.hcl TARGET=qemu.windows-2022-bios
+	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-$(VERSION)
 
 validate:
 	packer validate -var "hypervisor=$(HYPERVISOR)" -var "headless=$(HEADLESS)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
