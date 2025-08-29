@@ -1,5 +1,6 @@
 VERSION = archlinux-x86_64
 TEMPLATE_NAME=jubeaz
+HEADLESS=false
 #BUILD_NAME=qemu
 ## BUILD_NAME=virtualbox-iso
 #HYPERVISOR=qemu
@@ -36,11 +37,11 @@ virtualbox-bios:
 	$(MAKE) deploy BOXNAME=$(BOXNAME)
 
 validate:
-	packer validate -var "hypervisor=$(HYPERVISOR)" -var "archiso_verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
+	packer validate -var "hypervisor=$(HYPERVISOR)" -var "headless=$(HEADLESS)" -var "archiso_verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
 clean:
 	rm -rf boxes/*.box
 build:
-	packer build -force -on-error=ask -timestamp-ui -var "hypervisor=$(HYPERVISOR)" -var "archiso_verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) -only=${TARGET} .
+	packer build -force -on-error=ask -timestamp-ui -var "headless=$(HEADLESS)" -var "hypervisor=$(HYPERVISOR)" -var "archiso_verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) -only=${TARGET} .
 deploy: 
 	vagrant box add $(BOXNAME) ./boxes/$(BOXNAME).box --force
 
