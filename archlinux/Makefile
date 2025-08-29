@@ -17,24 +17,12 @@ init:
 	packer plugins install github.com/hashicorp/vagrant
 
 qemu-bios:
-	$(eval BUILD_NAME := qemu)
-	$(eval HYPERVISOR := qemu)
-	$(eval BOOTMODE := bios)
-	$(eval VARFILE := arch-$(HYPERVISOR)-$(BOOTMODE).pkrvars.hcl)
-	$(eval TARGET := $(BUILD_NAME).archlinux-$(BOOTMODE))
-	$(eval BOXNAME := $(BUILD_NAME)-$(TEMPLATE_NAME)-$(BOOTMODE)-$(VERSION))
-	$(MAKE) build HYPERVISOR=$(HYPERVISOR)  BOXNAME=$(BOXNAME) VARFILE=$(VARFILE) TARGET=$(TARGET)
-	$(MAKE) deploy BOXNAME=$(BOXNAME)
+	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-bios-rchlinux-x86_64 VARFILE=arch-qemu-bios.pkrvars.hcl TARGET=qemu.archlinux-bios
+	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-rchlinux-x86_64
 
 virtualbox-bios:
-	$(eval BUILD_NAME := virtualbox-iso)
-	$(eval HYPERVISOR := virtualbox)
-	$(eval BOOTMODE := bios)
-	$(eval VARFILE := arch-$(HYPERVISOR)-$(BOOTMODE).pkrvars.hcl)
-	$(eval TARGET := $(BUILD_NAME).archlinux-$(BOOTMODE))
-	$(eval BOXNAME := $(BUILD_NAME)-$(TEMPLATE_NAME)-$(BOOTMODE)-$(VERSION))
-	$(MAKE) build HYPERVISOR=$(HYPERVISOR)  BOXNAME=$(BOXNAME) VARFILE=$(VARFILE) TARGET=$(TARGET)
-	$(MAKE) deploy BOXNAME=$(BOXNAME)
+	$(MAKE) build HYPERVISOR=virtualbox  BOXNAME= virtualbox-jubeaz-bios-archlinux-x86_64 VARFILE=arch-virtualbox-bios.pkrvars.hcl TARGET=irtualbox-iso.archlinux-bios
+	$(MAKE) deploy BOXNAME= virtualbox-jubeaz-bios-archlinux-x86_64
 
 validate:
 	packer validate -var "hypervisor=$(HYPERVISOR)" -var "headless=$(HEADLESS)" -var "archiso_verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
