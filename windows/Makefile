@@ -1,4 +1,6 @@
 HEADLESS=false
+VERSION=windows-2022
+TEMPLATE_NAME=jubeaz
 init:
 	packer init .
 	packer plugins install github.com/hashicorp/vagrant

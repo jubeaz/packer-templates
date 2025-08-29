@@ -1,12 +1,13 @@
 HEADLESS=false
-
+VERSION=archlinux-x86_64
+TEMPLATE_NAME=jubeaz
 init:
 	packer init .
 	packer plugins install github.com/hashicorp/vagrant
 
 qemu-bios:
-	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-bios-archlinux-x86_64 VARFILE=arch-qemu-bios.pkrvars.hcl TARGET=qemu.archlinux-bios
-	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-archlinux-x86_64
+	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-bios-$(VERSION) VARFILE=arch-qemu-bios.pkrvars.hcl TARGET=qemu.archlinux-bios
+	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-$(VERSION)
 
 virtualbox-bios:
 	$(MAKE) build HYPERVISOR=virtualbox  BOXNAME= virtualbox-jubeaz-bios-archlinux-x86_64 VARFILE=arch-virtualbox-bios.pkrvars.hcl TARGET=irtualbox-iso.archlinux-bios
