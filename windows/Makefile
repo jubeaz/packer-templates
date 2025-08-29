@@ -1,26 +1,18 @@
-VERSION = windows-2022
-TEMPLATE_NAME=jubeaz
-BUILD_NAME=qemu
-# BUILD_NAME=virtualbox-iso
-HYPERVISOR=qemu
-#HYPERVISOR=virtualbox
-BOOTMODE=bios
-#BOOTMODE=uefi
-VARFILE = windows-$(HYPERVISOR)-$(BOOTMODE)-${VERSION}.pkrvars.hcl
-TARGET = $(BUILD_NAME).${VERSION}-$(BOOTMODE)
-BOXNAME = $(BUILD_NAME)-$(TEMPLATE_NAME)-$(BOOTMODE)-$(VERSION)
-
-#STRIPPED := $(shell echo $(VERSION) | sed -E 's/-[0-9]{4}\.[0-9]{2}\.[0-9]{2}-/-/')
+HEADLESS=false
 init:
 	packer init .
 	packer plugins install github.com/hashicorp/vagrant
 	
+qemu-bios-windows-2022:
+	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-bios-windows-2022 VARFILE=windows-qemu-bios-windows-2022.pkrvars.hcl TARGET=qemu.windows-2022-bios
+	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-windows-2022
+
 validate:
-	packer validate -var "hypervisor=$(HYPERVISOR)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
+	packer validate -var "hypervisor=$(HYPERVISOR)" -var "headless=$(HEADLESS)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
 clean:
 	rm -rf boxes/*.box
 build:
-	packer build -force -on-error=ask -timestamp-ui -var "hypervisor=$(HYPERVISOR)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) -only=${TARGET} .
+	packer build -force -on-error=ask -timestamp-ui -var "headless=$(HEADLESS)" -var "hypervisor=$(HYPERVISOR)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) -only=${TARGET} .
 deploy: 
 	vagrant box add $(BOXNAME) ./boxes/$(BOXNAME).box --force
 
