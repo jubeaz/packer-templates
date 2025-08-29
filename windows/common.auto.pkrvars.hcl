@@ -1,0 +1,12 @@
+packer_password     = "packer"
+ansible_login       = "jubeaz"
+ansible_password    = "jubeaz"
+#domain              = "local"
+hostname            = "packer"
+
+accelerator         = "kvm"
+cpu                 = "4"
+ram                 = "4096"
+disk_size           = "61440"
+headless            = "false"
+shutdown_command    = "%WINDIR%/system32/sysprep/sysprep.exe /generalize /oobe /shutdown /unattend:C:/Windows/Temp/Autounattend.xml"

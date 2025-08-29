@@ -1,4 +1,10 @@
 # https://www.packer.io/docs/templates/hcl_templates/variables#type-constraints for more info.
+# #################
+# version
+# #################
+variable "hypervisor" {
+  type = string
+}
 
 # #################
 # version

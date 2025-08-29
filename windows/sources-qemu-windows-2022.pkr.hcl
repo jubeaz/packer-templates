@@ -1,0 +1,25 @@
+source "qemu" "windows-2022-bios" {
+  output_directory = "${local.output_directory}"
+  vm_name          = "${local.vm_name}.qcow2"
+  iso_checksum     = "${var.iso_checksum}"
+  iso_url          = "${var.iso_url}"
+  accelerator      = "${var.accelerator}"
+  boot_wait        = "20s"
+  communicator     = "winrm"
+  cpus             = "${var.cpu}"
+  disk_compression = "true"
+  disk_interface   = "virtio"
+  disk_size        = "${var.disk_size}"
+  floppy_files     = ["${var.autounattend}", "./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./answer_files/Firstboot/Firstboot-Autounattend.xml", "./drivers/"]
+  format           = "qcow2"
+  headless         = "${var.headless}"
+  memory           = "${var.ram}"
+  net_device       = "virtio-net"
+  #qemuargs         = [["-vga", "qxl"]]
+  shutdown_command = "${var.shutdown_command}"
+  winrm_insecure   = "true"
+  winrm_password   = "vagrant"
+  winrm_timeout    = "30m"
+  winrm_use_ssl    = "true"
+  winrm_username   = "vagrant"
+}
