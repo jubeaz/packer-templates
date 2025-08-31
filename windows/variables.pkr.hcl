@@ -18,6 +18,13 @@ variable "packer_user" {
   sensitive = false
 }
 
+variable "admin_password" {
+  type      = string
+  default   = "Zaebuj12345+-"
+  sensitive = false
+}
+
+
 variable "ansible_login" {
   type      = string
   sensitive = true
@@ -37,6 +44,10 @@ variable "packer_password" {
 variable "hostname" {
   type    = string
   default = "Windows"
+}
+variable "keymap" {
+  type    = string
+  default = "fr-FR"
 }
 
 variable "accelerator" {

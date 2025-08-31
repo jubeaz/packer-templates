@@ -1,9 +1,10 @@
 packer_password     = "packer"
+admin_password      = "Zaebuj12345+-"
 ansible_login       = "jubeaz"
 ansible_password    = "jubeaz"
 #domain              = "local"
 hostname            = "packer"
-
+keymap              = "fr-FR"
 accelerator         = "kvm"
 cpu                 = "4"
 ram                 = "4096"

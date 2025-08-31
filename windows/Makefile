@@ -1,4 +1,4 @@
-HEADLESS=true
+HEADLESS=false
 VERSION=windows-2022
 TEMPLATE_NAME=jubeaz
 init:

@@ -10,7 +10,22 @@ source "qemu" "windows-2022-bios" {
   disk_compression = "true"
   disk_interface   = "virtio"
   disk_size        = "${var.disk_size}"
-  floppy_files     = ["${var.autounattend}", "./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./answer_files/Firstboot/Firstboot-Autounattend.xml", "./drivers/"]
+  floppy_content = {
+    "Autounattend.xml" = templatefile(
+                    "${path.root}/srv/Autounattend-2022.xml.pkrtpl", 
+                    {
+                      tpl_admin_password = "${var.admin_password}",
+                      tpl_username = "${var.ansible_login}",
+                      tpl_password = "${var.ansible_password}",
+                      tpl_keymap = "${var.keymap}"
+                    }
+                  )
+  }
+  floppy_files     = ["./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./answer_files/Firstboot/Firstboot-Autounattend.xml", "./drivers/"]
+  #floppy_files     = ["${var.autounattend}", "./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./answer_files/Firstboot/Firstboot-Autounattend.xml", "./drivers/"]
+#template_floppy_files = {
+#  "Autounattend.xml": templatefile("${path.root}/templates/Autunattend.xml", { product_key = var.product_key })
+#}
   format           = "qcow2"
   headless         = "${var.headless}"
   memory           = "${var.ram}"
@@ -18,8 +33,10 @@ source "qemu" "windows-2022-bios" {
   #qemuargs         = [["-vga", "qxl"]]
   shutdown_command = "${var.shutdown_command}"
   winrm_insecure   = "true"
-  winrm_password   = "vagrant"
   winrm_timeout    = "30m"
   winrm_use_ssl    = "true"
-  winrm_username   = "vagrant"
+#  winrm_password   = "vagrant"
+#  winrm_username   = "vagrant"
+  winrm_password   = "${var.ansible_login}"
+  winrm_username   = "${var.ansible_password}"
 }
