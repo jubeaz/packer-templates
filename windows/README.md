@@ -1,4 +1,13 @@
+# mose pb
+
+<input type="tablet" bus="usb">
+  <alias name="input2"/>
+  <address type="usb" bus="0" port="1"/>
+</input>
+
+
 https://www.it-connect.fr/vmware-workstation-creer-une-vm-windows-server-avec-packer-et-vagrant/
+
 
 
 
