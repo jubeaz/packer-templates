@@ -94,5 +94,4 @@ variable "shutdown_command" {
 
 variable "vm_name" {
   type    = string
-  default = "windows_2022"
 }

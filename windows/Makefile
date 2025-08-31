@@ -14,7 +14,7 @@ validate:
 clean:
 	rm -rf boxes/*.box
 build:
-	packer build -force -on-error=ask -timestamp-ui -var "headless=$(HEADLESS)" -var "hypervisor=$(HYPERVISOR)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) -only=${TARGET} .
+	packer build -force -on-error=ask -timestamp-ui -var "headless=$(HEADLESS)" -var "vm_name=$(BOXNAME}" -var "hypervisor=$(HYPERVISOR)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) -only=${TARGET} .
 deploy: 
 	vagrant box add $(BOXNAME) ./boxes/$(BOXNAME).box --force
 

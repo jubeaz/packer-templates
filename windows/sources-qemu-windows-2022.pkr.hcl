@@ -19,9 +19,15 @@ source "qemu" "windows-2022-bios" {
                       tpl_password = "${var.ansible_password}",
                       tpl_keymap = "${var.keymap}"
                     }
-                  )
+                  ),
+    "Firstboot-Autounattend.xml" = templatefile(
+                    "${path.root}/templates/Firstboot-Autounattend.xml.pkrtpl", 
+                    {
+                      tpl_keymap = "${var.keymap}"
+                    }
+                  ),                  
   }
-  floppy_files     = ["./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./answer_files/Firstboot/Firstboot-Autounattend.xml", "./drivers/"]
+  floppy_files     = ["./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./drivers/"]
   #floppy_files     = ["${var.autounattend}", "./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./answer_files/Firstboot/Firstboot-Autounattend.xml", "./drivers/"]
 #template_floppy_files = {
 #  "Autounattend.xml": templatefile("${path.root}/templates/Autunattend.xml", { product_key = var.product_key })
