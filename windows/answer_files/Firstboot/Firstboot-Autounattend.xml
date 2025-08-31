@@ -24,9 +24,16 @@
         <RunSynchronousCommand wcm:action="add">
           <!-- This *MUST* be copied over before this is run! -->
           <!-- This is usually done by 0-firstlogin.bat -->
+          <Description>Setup fixenetwork again</Description>
+          <Path>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File C:/Windows/Temp/fixnetwork.ps1</Path>
+          <Order>10</Order>
+        </RunSynchronousCommand>
+        <RunSynchronousCommand wcm:action="add">
+          <!-- This *MUST* be copied over before this is run! -->
+          <!-- This is usually done by 0-firstlogin.bat -->
           <Description>Setup winrm again</Description>
           <Path>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File C:/Windows/Temp/enable-winrm.ps1</Path>
-          <Order>10</Order>
+          <Order>20</Order>
         </RunSynchronousCommand>
         <RunSynchronousCommand wcm:action="add">
           <!-- Delete a temporary file used to track sysprep status-->
@@ -63,10 +70,10 @@
     processorArchitecture="amd64"
     publicKeyToken="31bf3856ad364e35"
     language="neutral" versionScope="nonSxS">
-  <InputLocale>0c09:00000409</InputLocale>
+  <InputLocale>fr-FR</InputLocale>
   <SystemLocale>en-US</SystemLocale>
   <UILanguage>en-US</UILanguage>
-  <UserLocale>en-AU</UserLocale>
+  <UserLocale>en-US</UserLocale>
 </component>
     </settings>
   </unattend>

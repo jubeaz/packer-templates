@@ -46,7 +46,6 @@ variable "accelerator" {
 
 variable "autounattend" {
   type    = string
-  default = "./answer_files/2022-standard/Autounattend.xml"
 }
 
 variable "cpu" {

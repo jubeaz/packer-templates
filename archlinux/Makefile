@@ -1,4 +1,4 @@
-HEADLESS=false
+HEADLESS=true
 VERSION=archlinux-x86_64
 TEMPLATE_NAME=jubeaz
 init:

@@ -8,6 +8,8 @@ REM Copy our sysprep Autounattend for our post-packer first boot
 copy "A:/Firstboot-Autounattend.xml" "C:/Windows/Temp/Autounattend.xml"
 REM Copy the enable-winrm script, relied on by our post-packer autounattend script
 copy "A:/50-enable-winrm.ps1" "C:/Windows/Temp/enable-winrm.ps1"
+REM Copy the fixnetwork script, relied on by our post-packer autounattend script
+copy "A:/1-fixnetwork.ps1" "C:/Windows/Temp/fixnetwork.ps1"
 
 REM Set PowerShell Execution Policy 64 Bit
 powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"

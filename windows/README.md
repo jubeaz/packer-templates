@@ -1,3 +1,7 @@
+https://www.it-connect.fr/vmware-workstation-creer-une-vm-windows-server-avec-packer-et-vagrant/
+
+
+
 https://github.com/Orange-Cyberdefense/GOAD/blob/main/packer/vagrant/windows_2022.json
 https://github.com/proactivelabs/packer-windows/tree/master
 https://wiki.archlinux.org/title/QEMU#Preparing_an_Arch_Linux_guest
