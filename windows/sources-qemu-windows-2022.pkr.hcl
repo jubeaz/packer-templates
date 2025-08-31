@@ -12,7 +12,7 @@ source "qemu" "windows-2022-bios" {
   disk_size        = "${var.disk_size}"
   floppy_content = {
     "Autounattend.xml" = templatefile(
-                    "${path.root}/srv/Autounattend-2022.xml.pkrtpl", 
+                    "${path.root}/templates/Autounattend-2022.xml.pkrtpl", 
                     {
                       tpl_admin_password = "${var.admin_password}",
                       tpl_username = "${var.ansible_login}",
