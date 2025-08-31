@@ -124,10 +124,10 @@
       </OOBE>
       <AutoLogon>
         <Password>
-          <Value>vagrant</Value>
+          <Value>${tpl_password}</Value>
           <PlainText>true</PlainText>
         </Password>
-        <Username>vagrant</Username>
+        <Username>${tpl_username}</Username>
         <Enabled>true</Enabled>
       </AutoLogon>
       <FirstLogonCommands>
