@@ -36,7 +36,8 @@ source "qemu" "windows-2022-bios" {
   headless         = "${var.headless}"
   memory           = "${var.ram}"
   net_device       = "virtio-net"
-  #qemuargs         = [["-vga", "qxl"]]
+  #qemuargs         = [["-vga", "qxl"], ["-usbdevice", "tablet"]]
+  #qemuargs         = [["-usbdevice", "tablet"]]
   shutdown_command = "${var.shutdown_command}"
   winrm_insecure   = "true"
   winrm_timeout    = "30m"
