@@ -100,7 +100,7 @@ source "qemu" "windows-2022-uefi" {
   winrm_username   = "${var.ansible_password}"
   machine_type     = "q35" # As of now, q35 is required for secure boot to be enabled
   vtpm             = true
-  efi_firmware_code = "ovmf/OVMF_CODE.secboot.4m.fd"
+  efi_firmware_code = "ovmf/OVMF_CODE_4M.secboot.fd"
   efi_firmware_vars = "ovmf/OVMF_VARS_4M.ms.fd" # efivars with MS keys built-in. This is the closest setup to a real machine as the KEK and PK from MS are generally those setup by OEM manufacturers.
   efi_boot          = true
 }
