@@ -1,6 +1,6 @@
 source "qemu" "windows-2022-bios" {
   output_directory = "${local.output_directory}"
-  vm_name          = "${local.vm_name}.qcow2"
+  vm_name          = "${var.vm_name}.qcow2"
   iso_checksum     = "${var.iso_checksum}"
   iso_url          = "${var.iso_url}"
   accelerator      = "${var.accelerator}"
@@ -52,7 +52,7 @@ source "qemu" "windows-2022-bios" {
 
 source "qemu" "windows-2022-uefi" {
   output_directory = "${local.output_directory}"
-  vm_name          = "${local.vm_name}.qcow2"
+  vm_name          = "${var.vm_name}.qcow2"
   iso_checksum     = "${var.iso_checksum}"
   iso_url          = "${var.iso_url}"
   accelerator      = "${var.accelerator}"

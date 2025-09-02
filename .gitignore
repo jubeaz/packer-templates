@@ -1,3 +1,4 @@
 */boxes/*.box
 windows/ovmf/download
 *.exe
+windows/builds/*
