@@ -12,7 +12,7 @@ source "qemu" "windows-2022-bios" {
   disk_size        = "${var.disk_size}"
   floppy_content = {
     "Autounattend.xml" = templatefile(
-                    "${path.root}/templates/Autounattend-2022-bios.xml.pkrtpl", 
+                    "${path.root}/unattend/Autounattend-2022-bios.xml.pkrtpl", 
                     {
                       tpl_admin_password = "${var.admin_password}",
                       tpl_username = "${var.ansible_login}",
@@ -21,17 +21,20 @@ source "qemu" "windows-2022-bios" {
                     }
                   ),
     "Firstboot-Autounattend.xml" = templatefile(
-                    "${path.root}/templates/Firstboot-Autounattend.xml.pkrtpl", 
+                    "${path.root}/unattend/Firstboot-Autounattend.xml.pkrtpl", 
                     {
                       tpl_keymap = "${var.keymap}"
                     }
-                  ),                  
+                  ),           
+    "0-firstlogin.bat" = templatefile(
+                    "${path.root}/templates/0-firstlogin.bat.pkrtpl", 
+                    {
+                      tpl_username = "${var.ansible_login}",
+                      tpl_drive = "A"
+                    }
+                  )                   
   }
-  floppy_files     = ["./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./drivers/"]
-  #floppy_files     = ["${var.autounattend}", "./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./answer_files/Firstboot/Firstboot-Autounattend.xml", "./drivers/"]
-#template_floppy_files = {
-#  "Autounattend.xml": templatefile("${path.root}/templates/Autunattend.xml", { product_key = var.product_key })
-#}
+  floppy_files     = ["${path.root}/scripts/0-firstlogin.bat", "${path.root}/scripts/1-fixnetwork.ps1", "${path.root}/scripts/70-install-misc.bat", "${path.root}/scripts/50-enable-winrm.ps1", "${path.root}/drivers/"]
   format           = "qcow2"
   headless         = "${var.headless}"
   memory           = "${var.ram}"
@@ -42,8 +45,6 @@ source "qemu" "windows-2022-bios" {
   winrm_insecure   = "true"
   winrm_timeout    = "30m"
   winrm_use_ssl    = "true"
-#  winrm_password   = "vagrant"
-#  winrm_username   = "vagrant"
   winrm_password   = "${var.ansible_login}"
   winrm_username   = "${var.ansible_password}"
 }
@@ -60,50 +61,64 @@ source "qemu" "windows-2022-uefi" {
   cpus             = "${var.cpu}"
   disk_compression = "true"
   disk_interface   = "virtio"
+  #disk_interface   = "ide"
+  #use_pflash       = true
   disk_size        = "${var.disk_size}"
   cd_content     = {
     "Autounattend.xml" = templatefile(
-                    "${path.root}/templates/Autounattend-2022-uefi.xml.pkrtpl", 
+                    "${path.root}/unattend/Autounattend-2022-uefi.xml.pkrtpl", 
                     {
                       tpl_admin_password = "${var.admin_password}",
                       tpl_username = "${var.ansible_login}",
                       tpl_password = "${var.ansible_password}",
                       tpl_keymap = "${var.keymap}"
+                      tpl_drive = "E" 
                     }
-                  )
-  }
-  floppy_content = {
+                  ),
     "Firstboot-Autounattend.xml" = templatefile(
-                    "${path.root}/templates/Firstboot-Autounattend.xml.pkrtpl", 
+                    "${path.root}/unattend/Firstboot-Autounattend.xml.pkrtpl", 
                     {
                       tpl_keymap = "${var.keymap}"
                     }
-                  ),                  
+                  ),           
+    "0-firstlogin.bat" = templatefile(
+                    "${path.root}/templates/0-firstlogin.bat.pkrtpl", 
+                    {
+                      tpl_username = "${var.ansible_login}",
+                      tpl_drive = "E"
+                    }
+                  )           
   }
-  floppy_files     = ["./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./drivers/"]
-  #floppy_files     = ["${var.autounattend}", "./scripts/0-firstlogin.bat", "./scripts/1-fixnetwork.ps1", "./scripts/70-install-misc.bat", "./scripts/50-enable-winrm.ps1", "./answer_files/Firstboot/Firstboot-Autounattend.xml", "./drivers/"]
-#template_floppy_files = {
-#  "Autounattend.xml": templatefile("${path.root}/templates/Autunattend.xml", { product_key = var.product_key })
-#}
+  cd_files     = ["${path.root}/scripts/1-fixnetwork.ps1", "${path.root}/scripts/70-install-misc.bat", "${path.root}/scripts/50-enable-winrm.ps1", "${path.root}/drivers/"]
+	cd_label         = "install"
   format           = "qcow2"
   headless         = "${var.headless}"
   memory           = "${var.ram}"
   net_device       = "virtio-net"
   #qemuargs         = [["-vga", "qxl"], ["-usbdevice", "tablet"]]
   #qemuargs         = [["-usbdevice", "tablet"]]
-  qemuargs         = [["-cpu", "host"]]
+  #qemuargs         = [
+  #  ["-cpu", "host"],
+  #  #["-device", "usb-tablet"],
+  #  #["-device", "qemu-xhci"],
+  #  # Adds a USB 3.0 controller and Places the controller on the PCIe root
+  #  #["-device", "qemu-xhci,id=usb,bus=pcie.0,addr=0x8"],
+  #  # Attaches the tablet to USB controller usb.0 at port 1
+  #  #["-device", "usb-tablet,bus=usb.0,port=1"]
+  #]
   shutdown_command = "${var.shutdown_command}"
   winrm_insecure   = "true"
   winrm_timeout    = "30m"
   winrm_use_ssl    = "true"
-#  winrm_password   = "vagrant"
-#  winrm_username   = "vagrant"
   winrm_password   = "${var.ansible_login}"
   winrm_username   = "${var.ansible_password}"
   machine_type     = "q35" # As of now, q35 is required for secure boot to be enabled
-  vtpm             = true
-  efi_firmware_code = "ovmf/OVMF_CODE_4M.secboot.fd"
-  efi_firmware_vars = "ovmf/OVMF_VARS_4M.ms.fd" # efivars with MS keys built-in. This is the closest setup to a real machine as the KEK and PK from MS are generally those setup by OEM manufacturers.
+  #vtpm             = true
+  efi_firmware_code = "/usr/share/OVMF/x64/OVMF_CODE.4m.fd"
+  efi_firmware_vars = "/usr/share/OVMF/x64/OVMF_VARS.4m.fd"
+  #efi_firmware_code = "/usr/share/OVMF/x64/OVMF_CODE.secboot.4m.fd"
+  #efi_firmware_code = "${path.root}/ovmf/OVMF_CODE_4M.secboot.fd"
+  #efi_firmware_vars = "${path.root}/ovmf/OVMF_VARS_4M.ms.fd" # efivars with MS keys built-in. This is the closest setup to a real machine as the KEK and PK from MS are generally those setup by OEM manufacturers.
   efi_boot          = true
-  boot_command     = ["<enter>FS1:<enter>EFI\\BOOT\\bootx64.efi<enter><enter>"]
+  boot_command = ["<enter>"]
 }

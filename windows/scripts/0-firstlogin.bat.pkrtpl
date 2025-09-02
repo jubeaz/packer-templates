@@ -5,11 +5,11 @@ REM Set high performance mode
 powercfg /SETACTIVE 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
 
 REM Copy our sysprep Autounattend for our post-packer first boot
-copy "A:/Firstboot-Autounattend.xml" "C:/Windows/Temp/Autounattend.xml"
+copy "${tpl_drive}:/Firstboot-Autounattend.xml" "C:/Windows/Temp/Autounattend.xml"
 REM Copy the enable-winrm script, relied on by our post-packer autounattend script
-copy "A:/50-enable-winrm.ps1" "C:/Windows/Temp/enable-winrm.ps1"
+copy "${tpl_drive}:/50-enable-winrm.ps1" "C:/Windows/Temp/enable-winrm.ps1"
 REM Copy the fixnetwork script, relied on by our post-packer autounattend script
-copy "A:/1-fixnetwork.ps1" "C:/Windows/Temp/fixnetwork.ps1"
+copy "${tpl_drive}:/1-fixnetwork.ps1" "C:/Windows/Temp/fixnetwork.ps1"
 
 REM Set PowerShell Execution Policy 64 Bit
 powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"
@@ -32,15 +32,15 @@ REM Disable hibernation support
 REM Remove hibernation file
 powercfg /h off 
 
-REM Disable password expiration for vagrant user</Description>
-wmic useraccount where "name='vagrant'" set PasswordExpires=FALSE
+REM Disable password expiration for ${tpl_username} user</Description>
+wmic useraccount where "name='${tpl_username}'" set PasswordExpires=FALSE
 
 REM Installs the code signing cert for RedHat
 REM which is needed to trust the driver installation for QEMU related hardware
 REM Install redhat cert for trust
-certutil -addstore -f "TrustedPublisher" a:/redhat-cert.cer
+certutil -addstore -f "TrustedPublisher" ${tpl_drive}:/redhat-cert.cer
 REM Install the old redhat cert, used for most of their kvm drivers
-certutil -addstore -f "TrustedPublisher" a:/redhat-cert-old.cer
+certutil -addstore -f "TrustedPublisher" ${tpl_drive}:/redhat-cert-old.cer
 
 REM WSUS / Updates
 REM When upgrading packages, we'd normally have to wait for Tiworker to exit

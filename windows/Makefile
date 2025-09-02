@@ -13,7 +13,8 @@ qemu-uefi-windows-2022:
 	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-uefi-$(VERSION) VARFILE=windows-qemu-uefi-windows-2022.pkrvars.hcl TARGET=qemu.windows-2022-uefi
 	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-$(VERSION)
 
-
+download:
+	 curl https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.271-1/virtio-win-guest-tools.exe -O drivers/virtio-win-guest-tools.exe
 validate:
 	packer validate -var "hypervisor=$(HYPERVISOR)" -var "headless=$(HEADLESS)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
 clean:

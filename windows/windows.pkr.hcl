@@ -7,7 +7,7 @@ packer {
     }
     qemu = {
       source  = "github.com/hashicorp/qemu"
-      version = "~> 1"
+      version = "~> 1.1.4"
     }
     windows-update = {
       version = "0.17.0"

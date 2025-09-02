@@ -15,30 +15,25 @@ variable "verion" {
 variable "packer_user" {
   type      = string
   default   = "packer"
-  sensitive = false
 }
 
 variable "admin_password" {
   type      = string
   default   = "Zaebuj12345+-"
-  sensitive = false
 }
 
 
 variable "ansible_login" {
   type      = string
-  sensitive = true
 }
 
 variable "ansible_password" {
   type      = string
-  sensitive = true
 }
 
 variable "packer_password" {
   type      = string
   default   = "packer"
-  sensitive = false
 }
 
 variable "hostname" {
