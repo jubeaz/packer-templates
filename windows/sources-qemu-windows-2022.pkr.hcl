@@ -82,7 +82,7 @@ source "qemu" "windows-2022-uefi" {
                     }
                   ),           
     "0-firstlogin.bat" = templatefile(
-                    "${path.root}/templates/0-firstlogin.bat.pkrtpl", 
+                    "${path.root}/scripts/0-firstlogin.bat.pkrtpl", 
                     {
                       tpl_username = "${var.ansible_login}",
                       tpl_drive = "E"
