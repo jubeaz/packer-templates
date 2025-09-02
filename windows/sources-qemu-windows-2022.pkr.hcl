@@ -55,13 +55,13 @@ source "qemu" "windows-2022-uefi" {
   iso_checksum     = "${var.iso_checksum}"
   iso_url          = "${var.iso_url}"
   accelerator      = "${var.accelerator}"
-  boot_wait        = "20s"
+  boot_wait        = "3s"
   communicator     = "winrm"
   cpus             = "${var.cpu}"
   disk_compression = "true"
   disk_interface   = "virtio"
   disk_size        = "${var.disk_size}"
-  floppy_content = {
+  cd_content     = {
     "Autounattend.xml" = templatefile(
                     "${path.root}/templates/Autounattend-2022-uefi.xml.pkrtpl", 
                     {
@@ -70,7 +70,9 @@ source "qemu" "windows-2022-uefi" {
                       tpl_password = "${var.ansible_password}",
                       tpl_keymap = "${var.keymap}"
                     }
-                  ),
+                  )
+  }
+  floppy_content = {
     "Firstboot-Autounattend.xml" = templatefile(
                     "${path.root}/templates/Firstboot-Autounattend.xml.pkrtpl", 
                     {
@@ -103,4 +105,5 @@ source "qemu" "windows-2022-uefi" {
   efi_firmware_code = "ovmf/OVMF_CODE_4M.secboot.fd"
   efi_firmware_vars = "ovmf/OVMF_VARS_4M.ms.fd" # efivars with MS keys built-in. This is the closest setup to a real machine as the KEK and PK from MS are generally those setup by OEM manufacturers.
   efi_boot          = true
+  boot_command     = ["<enter>FS1:<enter>EFI\\BOOT\\bootx64.efi<enter><enter>"]
 }
