@@ -21,7 +21,7 @@ packer {
 }
 
 build {
-  sources = ["source.qemu.windows-2022-bios"]
+  sources = ["source.qemu.windows-2022-bios", "source.qemu.windows-2022-uefi"]
   provisioner "windows-shell" {
     execute_command = "{{ .Vars }} cmd /c C:/Windows/Temp/script.bat"
     remote_path     = "c:/Windows/Temp/script.bat"

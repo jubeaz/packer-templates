@@ -9,6 +9,11 @@ qemu-bios-windows-2022:
 	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-bios-$(VERSION) VARFILE=windows-qemu-bios-windows-2022.pkrvars.hcl TARGET=qemu.windows-2022-bios
 	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-$(VERSION)
 
+qemu-uefi-windows-2022:
+	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-uefi-$(VERSION) VARFILE=windows-qemu-uefi-windows-2022.pkrvars.hcl TARGET=qemu.windows-2022-uefi
+	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-$(VERSION)
+
+
 validate:
 	packer validate -var "hypervisor=$(HYPERVISOR)" -var "headless=$(HEADLESS)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
 clean:
