@@ -37,16 +37,16 @@ build {
     restart_check_command = "powershell -command \"& {Write-Output 'restarted.'}\""
   }
 
-#  provisioner "windows-update" {
-#  }
-#
-#  # Without this step, your images will be ~12-15GB
-#  # With this step, roughly ~8-9GB
-#  provisioner "windows-shell" {
-#    execute_command = "{{ .Vars }} cmd /c C:/Windows/Temp/script.bat"
-#    remote_path     = "c:/Windows/Temp/script.bat"
-#    scripts         = ["./scripts/90-compact.bat"]
-#  }
+  provisioner "windows-update" {
+  }
+
+  # Without this step, your images will be ~12-15GB
+  # With this step, roughly ~8-9GB
+  provisioner "windows-shell" {
+    execute_command = "{{ .Vars }} cmd /c C:/Windows/Temp/script.bat"
+    remote_path     = "c:/Windows/Temp/script.bat"
+    scripts         = ["./scripts/90-compact.bat"]
+  }
   post-processors {
     post-processor "vagrant" {
       keep_input_artifact = false

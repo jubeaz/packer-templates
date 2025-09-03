@@ -42,9 +42,9 @@
       processorArchitecture="amd64"
       publicKeyToken="31bf3856ad364e35"
       language="neutral" versionScope="nonSxS">
-    <RegisteredOwner>ProactiveLabs</RegisteredOwner>
-    <RegisteredOrganization>ProactiveLabs</RegisteredOrganization>
-    <TimeZone>${tpl_timezone}</TimeZone>
+    <RegisteredOwner>Jubeaz</RegisteredOwner>
+    <RegisteredOrganization>Jubeaz</RegisteredOrganization>
+    <TimeZone>AUS Eastern Standard Time</TimeZone>
     <Computername>*</Computername>
     <OOBE>
       <HideEULAPage>true</HideEULAPage>

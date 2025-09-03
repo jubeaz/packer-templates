@@ -5,6 +5,10 @@ init:
 	packer init .
 	packer plugins install github.com/hashicorp/vagrant
 
+qemu-uefi:
+	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-uefi-$(VERSION) VARFILE=arch-qemu-uefi.pkrvars.hcl TARGET=qemu.archlinux-uefi
+	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-$(VERSION)
+
 qemu-bios:
 	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-bios-$(VERSION) VARFILE=arch-qemu-bios.pkrvars.hcl TARGET=qemu.archlinux-bios
 	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-$(VERSION)

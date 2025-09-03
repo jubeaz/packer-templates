@@ -40,7 +40,7 @@ build {
   }  
 
   provisioner "shell" {
-   only            = ["virtualbox-iso.archlinux-uefi", "virtualbox-iso.archlinux-bios"]
+   only            = ["qemu.archlinux-uefi", "qemu.archlinux-bios"]
    environment_vars =[
        "VBOX_USER=${var.ansible_login}",
    ]

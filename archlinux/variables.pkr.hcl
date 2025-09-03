@@ -71,13 +71,11 @@ variable "template_name" {
 variable "packer_user" {
   type      = string
   default   = "packer"
-  sensitive = false
 }
 
 variable "packer_password" {
   type      = string
   default   = "packer"
-  sensitive = false
 }
 
 # #################
@@ -86,12 +84,10 @@ variable "packer_password" {
 
 variable "ansible_login" {
   type      = string
-  sensitive = true
 }
 
 variable "ansible_password" {
   type      = string
-  sensitive = true
 }
 
 #variable "ansible_key" {
@@ -101,12 +97,10 @@ variable "ansible_password" {
 
 variable "ufw_allow_ssh_ip" {
   type      = string
-  sensitive = true
 }
 
 variable "ntp_pools" {
   type      = string
-  sensitive = false
   default   = "0.arch.pool.ntp.org, 1.arch.pool.ntp.org, 2.arch.pool.ntp.org, 3.arch.pool.ntp.org"
 }
 
