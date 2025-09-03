@@ -44,7 +44,10 @@ variable "keymap" {
   type    = string
   default = "fr-FR"
 }
-
+variable "timezone" {
+  type    = string
+  default = "Romance Standard Time"
+}
 variable "accelerator" {
   type    = string
   default = "kvm"

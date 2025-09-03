@@ -17,13 +17,15 @@ source "qemu" "windows-2022-bios" {
                       tpl_admin_password = "${var.admin_password}",
                       tpl_username = "${var.ansible_login}",
                       tpl_password = "${var.ansible_password}",
-                      tpl_keymap = "${var.keymap}"
+                      tpl_keymap = "${var.keymap}",
+                      tpl_timezone = "${var.timezone}"
                     }
                   ),
     "Firstboot-Autounattend.xml" = templatefile(
                     "${path.root}/unattend/Firstboot-Autounattend.xml.pkrtpl", 
                     {
-                      tpl_keymap = "${var.keymap}"
+                      tpl_keymap = "${var.keymap}",
+                      tpl_timezone = "${var.timezone}"
                     }
                   ),           
     "0-firstlogin.bat" = templatefile(
@@ -70,14 +72,16 @@ source "qemu" "windows-2022-uefi" {
                       tpl_admin_password = "${var.admin_password}",
                       tpl_username = "${var.ansible_login}",
                       tpl_password = "${var.ansible_password}",
-                      tpl_keymap = "${var.keymap}"
-                      tpl_drive = "E" 
+                      tpl_keymap = "${var.keymap}",
+                      tpl_drive = "E",
+                      tpl_timezone = "${var.timezone}"
                     }
                   ),
     "Firstboot-Autounattend.xml" = templatefile(
                     "${path.root}/unattend/Firstboot-Autounattend.xml.pkrtpl", 
                     {
-                      tpl_keymap = "${var.keymap}"
+                      tpl_keymap = "${var.keymap}",
+                      tpl_timezone = "${var.timezone}"
                     }
                   ),           
     "0-firstlogin.bat" = templatefile(

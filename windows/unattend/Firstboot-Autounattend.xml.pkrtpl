@@ -44,7 +44,7 @@
       language="neutral" versionScope="nonSxS">
     <RegisteredOwner>ProactiveLabs</RegisteredOwner>
     <RegisteredOrganization>ProactiveLabs</RegisteredOrganization>
-    <TimeZone>AUS Eastern Standard Time</TimeZone>
+    <TimeZone>${tpl_timezone}</TimeZone>
     <Computername>*</Computername>
     <OOBE>
       <HideEULAPage>true</HideEULAPage>

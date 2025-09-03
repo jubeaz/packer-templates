@@ -5,6 +5,7 @@ ansible_password    = "jubeaz"
 #domain              = "local"
 hostname            = "packer"
 keymap              = "fr-FR"  # 040c:0000040c
+timezone            = "Romance Standard Time"
 accelerator         = "kvm"
 cpu                 = "4"
 ram                 = "4096"
