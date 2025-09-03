@@ -34,7 +34,7 @@ source "qemu" "windows-2022-bios" {
                     }
                   )                   
   }
-  floppy_files     = ["${path.root}/scripts/0-firstlogin.bat", "${path.root}/scripts/1-fixnetwork.ps1", "${path.root}/scripts/70-install-misc.bat", "${path.root}/scripts/50-enable-winrm.ps1", "${path.root}/drivers/"]
+  floppy_files     = ["${path.root}/scripts/0-firstlogin.bat", "${path.root}/scripts/1-fixnetwork.ps1", "${path.root}/scripts/70-install-misc.bat", "${path.root}/scripts/50-enable-winrm.ps1", "${path.root}/drivers/", "${path.root}/binaries/virtio-win-guest-tools.exe"]
   format           = "qcow2"
   headless         = "${var.headless}"
   memory           = "${var.ram}"
@@ -61,7 +61,6 @@ source "qemu" "windows-2022-uefi" {
   cpus             = "${var.cpu}"
   disk_compression = "true"
   disk_interface   = "virtio"
-  #disk_interface   = "ide"
   #use_pflash       = true
   disk_size        = "${var.disk_size}"
   cd_content     = {
@@ -89,7 +88,7 @@ source "qemu" "windows-2022-uefi" {
                     }
                   )           
   }
-  cd_files     = ["${path.root}/scripts/1-fixnetwork.ps1", "${path.root}/scripts/70-install-misc.bat", "${path.root}/scripts/50-enable-winrm.ps1", "${path.root}/drivers/"]
+  cd_files     = ["${path.root}/scripts/1-fixnetwork.ps1", "${path.root}/scripts/70-install-misc.bat", "${path.root}/scripts/50-enable-winrm.ps1", "${path.root}/drivers/", "${path.root}/binaries/virtio-win-guest-tools.exe"]
 	cd_label         = "install"
   format           = "qcow2"
   headless         = "${var.headless}"
@@ -117,8 +116,8 @@ source "qemu" "windows-2022-uefi" {
   efi_firmware_code = "/usr/share/OVMF/x64/OVMF_CODE.4m.fd"
   efi_firmware_vars = "/usr/share/OVMF/x64/OVMF_VARS.4m.fd"
   #efi_firmware_code = "/usr/share/OVMF/x64/OVMF_CODE.secboot.4m.fd"
-  #efi_firmware_code = "${path.root}/ovmf/OVMF_CODE_4M.secboot.fd"
-  #efi_firmware_vars = "${path.root}/ovmf/OVMF_VARS_4M.ms.fd" # efivars with MS keys built-in. This is the closest setup to a real machine as the KEK and PK from MS are generally those setup by OEM manufacturers.
+  #efi_firmware_code = "${path.root}/ovmf/usr/share/OVMF/OVMF_CODE_4M.secboot.fd"
+  #efi_firmware_vars = "${path.root}/ovmf/usr/share/OVMF/OVMF_VARS_4M.ms.fd" # efivars with MS keys built-in. This is the closest setup to a real machine as the KEK and PK from MS are generally those setup by OEM manufacturers.
   efi_boot          = true
   boot_command = ["<enter>"]
 }

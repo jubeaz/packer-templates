@@ -10,6 +10,8 @@ REM Copy the enable-winrm script, relied on by our post-packer autounattend scri
 copy "${tpl_drive}:/50-enable-winrm.ps1" "C:/Windows/Temp/enable-winrm.ps1"
 REM Copy the fixnetwork script, relied on by our post-packer autounattend script
 copy "${tpl_drive}:/1-fixnetwork.ps1" "C:/Windows/Temp/fixnetwork.ps1"
+REM Copy the virtio-win-guest-tools.exe
+copy "${tpl_drive}:/virtio-win-guest-tools.exe" "C:/Windows/Temp/virtio-win-guest-tools.exe"
 
 REM Set PowerShell Execution Policy 64 Bit
 powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"

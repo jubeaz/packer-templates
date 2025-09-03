@@ -139,6 +139,13 @@
           <Description>Bootstrap everything</Description>
           <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
+        <!-- Setup virtio drivers using  virtio-win-guest-tools.exe -->
+        <SynchronousCommand wcm:action="add">
+          <CommandLine>C:\Windows\Temp\virtio-win-guest-tools.exe /s /qn /log c:\windows\temp\virtio-install-1.log</CommandLine>
+          <Description>virtio-win-guest-tools</Description>
+          <Order>2</Order>
+          <RequiresUserInput>false</RequiresUserInput>
+        </SynchronousCommand>
         <!-- Set firewall zones so we can have powershell remoting enabled -->
         <SynchronousCommand wcm:action="add">
           <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\1-fixnetwork.ps1</CommandLine>

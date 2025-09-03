@@ -10,15 +10,25 @@
 
 
 # TODO
+## virtio drivers install
+
+need the drivers to be accessible at boot time to be able to start then can be upgraded
+```
+      <DriverPaths>
+        <PathAndCredentials wcm:action="add" wcm:keyValue="1">
+          <Path>${tpl_drive}:\</Path>
+        </PathAndCredentials>
+      </DriverPaths>
+```
 ## secure boot
 
 ## mouse pb
-
+```
 <input type="tablet" bus="usb">
   <alias name="input2"/>
   <address type="usb" bus="0" port="1"/>
 </input>
-
+```
 
 
 # Notes

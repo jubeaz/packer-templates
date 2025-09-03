@@ -1,4 +1,10 @@
-*/boxes/*.box
+windows/boxes/*
+!windows/boxes/.gitkeep
+archlinux/boxes/*
+!archlinux/boxes/.gitkeep
 windows/ovmf/download
 *.exe
 windows/builds/*
+!windows/builds/.gitkeep
+windows/ovmf/*
+!windows/ovmf/.gitkeep
