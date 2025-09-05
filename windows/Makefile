@@ -16,9 +16,10 @@ qemu-uefi-windows-2022:
 download:
 	 curl -L -o binaries/virtio-win-guest-tools.exe https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.271-1/virtio-win-guest-tools.exe
 	 mkdir -p ./ovmf/tmp
-	 curl -L -o ./ovmf/tmp/ovmf_2024.02-2_all.deb https://ua.archive.ubuntu.com/ubuntu-archive/ubuntu/pool/main/e/edk2/ovmf_2024.02-2_all.deb
-	 ar xv ./ovmf/tmp/ovmf_2024.02-2_all.deb --output=./ovmf/tmp
-	 tar --use-compress-program=unzstd -xvf ovmf/tmp/data.tar.zst -C ./ovmf
+	 # https://packages.debian.org/sid/all/ovmf/download
+	 curl -L -o ./ovmf/tmp/ovmf_2025.02-9_all.deb http://ftp.fr.debian.org/debian/pool/main/e/edk2/ovmf_2025.02-9_all.deb
+	 ar xv ./ovmf/tmp/ovmf_2025.02-9_all.deb --output=./ovmf/tmp
+	 tar --use-compress-program=unzstd -xvf ovmf/tmp/data.tar.xz  -C ./ovmf
 	 rm -rf ./ovmf/tmp
 validate:
 	packer validate -var "hypervisor=$(HYPERVISOR)" -var "headless=$(HEADLESS)" -var "verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
