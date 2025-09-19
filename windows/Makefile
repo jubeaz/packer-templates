@@ -1,5 +1,5 @@
 HEADLESS=false
-VERSION=windows-2022
+VERSION=windows-2025
 TEMPLATE_NAME=jubeaz
 init:
 	packer init .
@@ -11,6 +11,10 @@ qemu-bios-windows-2022:
 
 qemu-uefi-windows-2022:
 	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-uefi-$(VERSION) VARFILE=windows-qemu-uefi-windows-2022.pkrvars.hcl TARGET=qemu.windows-2022-uefi
+	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-$(VERSION)
+
+qemu-uefi-windows-2025:
+	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-uefi-$(VERSION) VARFILE=windows-qemu-uefi-windows-2025.pkrvars.hcl TARGET=qemu.windows-2025-uefi
 	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-$(VERSION)
 
 download:
