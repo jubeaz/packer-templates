@@ -1,0 +1,7 @@
+build_type   = "bios"
+#iso_checksum = "sha256:3e4fa6d8507b554856fc9ca6079cc402df11a8b79344871669f0251535255325"
+#iso_url      = "https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso"
+iso_checksum = "sha256:7cbb65644248cdbe8a72f51fbd9f98c4888e0a4938575fc4f052d52b927116df"
+iso_url      = "https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso"
+iso_path     = "/var/lib/libvirt/isos/26100.1.240331-1435.ge_release_amd64fre_SERVER_LOF_PACKAGES_OEM.iso"
+autounattend = "./answer_files/2022-standard/Autounattend.xml"
