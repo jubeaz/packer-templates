@@ -13,6 +13,10 @@ qemu-uefi-windows-2022:
 	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-uefi-$(VERSION) VARFILE=windows-qemu-uefi-windows-2022.pkrvars.hcl TARGET=qemu.windows-2022-uefi
 	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-$(VERSION)
 
+qemu-bios-windows-2025:
+	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-bios-$(VERSION) VARFILE=windows-qemu-bios-windows-2025.pkrvars.hcl TARGET=qemu.windows-2025-bios
+	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-$(VERSION)
+
 qemu-uefi-windows-2025:
 	$(MAKE) build HYPERVISOR=qemu  BOXNAME=qemu-jubeaz-uefi-$(VERSION) VARFILE=windows-qemu-uefi-windows-2025.pkrvars.hcl TARGET=qemu.windows-2025-uefi
 	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-$(VERSION)

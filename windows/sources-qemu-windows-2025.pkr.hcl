@@ -1,3 +1,5 @@
+# https://github.com/norcams/packer-windows/blob/main/packer_templates/pkr-sources.pkr.hcl
+
 source "qemu" "windows-2025-bios" {
   output_directory = "${local.output_directory}"
   vm_name          = "${var.vm_name}.qcow2"
@@ -42,14 +44,14 @@ source "qemu" "windows-2025-bios" {
                     }
                   ),           
     "0-firstlogin.bat" = templatefile(
-                    "${path.root}/templates/0-firstlogin.bat.pkrtpl", 
+                    "${path.root}/scripts/0-firstlogin.bat.pkrtpl", 
                     {
                       tpl_username = "${var.ansible_login}",
                       tpl_drive = "A"
                     }
                   )                   
   }
-  floppy_files     = ["${path.root}/scripts/0-firstlogin.bat", "${path.root}/scripts/1-fixnetwork.ps1", "${path.root}/scripts/70-install-misc.bat", "${path.root}/scripts/50-enable-winrm.ps1", "${path.root}/drivers/", "${path.root}/binaries/virtio-win-guest-tools.exe"]
+  floppy_files     = ["${path.root}/scripts/1-fixnetwork.ps1", "${path.root}/scripts/70-install-misc.bat", "${path.root}/scripts/50-enable-winrm.ps1", "${path.root}/drivers/"]
 
   shutdown_command = "${var.shutdown_command}"
   boot_wait        = "20s"
@@ -61,9 +63,8 @@ source "qemu" "windows-2025-uefi" {
   vm_name          = "${var.vm_name}.qcow2"
   accelerator      = "${var.accelerator}"
   format           = "qcow2"
-  iso_path         = "${var.iso_path}"
-  #iso_checksum     = "${var.iso_checksum}"
-  #iso_url          = "${var.iso_url}"
+  iso_checksum     = "${var.iso_checksum}"
+  iso_url          = "${var.iso_url}"
 
   headless         = "${var.headless}"
   communicator     = "winrm"
@@ -79,6 +80,7 @@ source "qemu" "windows-2025-uefi" {
   disk_size        = "${var.disk_size}"
   memory           = "${var.ram}"
   net_device       = "virtio-net"
+  qemuargs         = [["-cpu", "host,migratable=on,hv-time=on,hv-relaxed=on,hv-vapic=on,hv-spinlocks=0x1fff"]]
   #qemuargs         = [["-vga", "qxl"], ["-usbdevice", "tablet"]]
   #qemuargs         = [["-usbdevice", "tablet"]]
   #qemuargs         = [
@@ -131,6 +133,7 @@ source "qemu" "windows-2025-uefi" {
 	cd_label         = "install"
 
   shutdown_command = "${var.shutdown_command}"
-  boot_wait        = "3s"
+  boot_wait        = "2s"
   boot_command = ["<enter>"]
+  #boot_command = []
 }
