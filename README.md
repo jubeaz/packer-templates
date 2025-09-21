@@ -6,7 +6,7 @@ https://github.com/proactivelabs/packer-windows
 https://github.com/jakobadam/packer-qemu-templates
 
 # TODO
-* secure boot: do as https://github.com/jubeaz/plaber/blob/master/providers/libvirt/README.md
+
 
 # Packer
 * [config](https://developer.hashicorp.com/packer/docs/configure)

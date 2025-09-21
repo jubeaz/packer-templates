@@ -50,10 +50,10 @@ qemu-uefi-windows-2025-core:
 			VERSION=windows-2025 \
 			BOXNAME=qemu-jubeaz-uefi-windows-2025-core \
 			BUILD_T_VARFILE=windows-qemu-uefi-windows-2025.pkrvars.hcl \
-			OS_V_VARFILE=windows-2022.pkrvars.hcl \
+			OS_V_VARFILE=windows-2025.pkrvars.hcl \
 			IS_CORE=true \
 			TARGET=qemu.windows-2025-uefi
-	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-windows-2025-core
+	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-windows-2025
 
 download:
 	 curl -L -o binaries/virtio-win-guest-tools.exe https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.271-1/virtio-win-guest-tools.exe
@@ -83,10 +83,9 @@ build:
 		-var "verion=$(VERSION)" \
 		-var "is_core=$(IS_CORE)" \
 		-var "template_name=$(TEMPLATE_NAME)" \
-		-var-fil $(BUILD_T_VARFILE) \
+		-var-file $(BUILD_T_VARFILE) \
 		-var-file $(OS_V_VARFILE) \
-		-only=${TARGET} \
-		.
+		-only=${TARGET} .
 deploy: 
 	vagrant box add $(BOXNAME) ./boxes/$(BOXNAME).box --force
 

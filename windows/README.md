@@ -12,6 +12,8 @@
 # TODO
 ## virtio drivers install
 
+setup a repackaging of `virtio-win.iso` to include requiered files
+
 need the drivers to be accessible at boot time to be able to start then can be upgraded
 ```
       <DriverPaths>
