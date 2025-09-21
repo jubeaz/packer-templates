@@ -121,7 +121,11 @@
           <InstallFrom>
             <MetaData wcm:action="add">
               <Key>/IMAGE/NAME</Key>
+              <!-- 
               <Value>Windows Server 2022 SERVERSTANDARD</Value>
+              <Value>Windows Server 2022 SERVERSTANDARDCORE</Value>
+              -->
+              <Value>${tpl_image_name}</Value>
             </MetaData>
           </InstallFrom>
         </OSImage>

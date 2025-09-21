@@ -31,7 +31,8 @@ source "qemu" "windows-2022-bios" {
                       tpl_username = "${var.ansible_login}",
                       tpl_password = "${var.ansible_password}",
                       tpl_keymap = "${var.keymap}",
-                      tpl_timezone = "${var.timezone}"
+                      tpl_timezone = "${var.timezone}",
+                      tpl_image_name = "Windows Server 2022 SERVERSTANDARDCORE" ? var.is_core : "Windows Server 2022 SERVERSTANDARD"
                     }
                   ),
     "Firstboot-Autounattend.xml" = templatefile(
@@ -108,7 +109,8 @@ source "qemu" "windows-2022-uefi" {
                       tpl_password = "${var.ansible_password}",
                       tpl_keymap = "${var.keymap}",
                       tpl_drive = "E",
-                      tpl_timezone = "${var.timezone}"
+                      tpl_timezone = "${var.timezone}",
+                      tpl_image_name = "Windows Server 2022 SERVERSTANDARDCORE" ? var.is_core : "Windows Server 2022 SERVERSTANDARD"
                     }
                   ),
     "Firstboot-Autounattend.xml" = templatefile(

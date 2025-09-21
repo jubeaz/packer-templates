@@ -22,7 +22,6 @@ variable "admin_password" {
   default   = "Zaebuj12345+-"
 }
 
-
 variable "ansible_login" {
   type      = string
 }
@@ -51,10 +50,6 @@ variable "timezone" {
 variable "accelerator" {
   type    = string
   default = "kvm"
-}
-
-variable "autounattend" {
-  type    = string
 }
 
 variable "cpu" {
@@ -92,4 +87,9 @@ variable "shutdown_command" {
 
 variable "vm_name" {
   type    = string
+}
+
+variable "is_core" {
+  type = bool
+  default = false
 }
