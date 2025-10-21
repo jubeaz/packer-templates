@@ -4,7 +4,7 @@
 set -eu
 
 TARGET_DIR='/mnt'
-CONFIG_SCRIPT='/root/arch-config.sh'
+CONFIG_SCRIPT='/root/packer-virtualbox.sh'
 CONFIG_SCRIPT_SHORT=`basename "$CONFIG_SCRIPT"`
 cat <<-EOF > "${TARGET_DIR}${CONFIG_SCRIPT}"
 
