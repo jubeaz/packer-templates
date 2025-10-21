@@ -25,4 +25,5 @@ echo ">>>> install-virtualbox.sh: Enabling VirtualBox Shared Folders.."
 EOF
 
 echo ">>>> install-virtualbox.sh: Entering chroot and configuring system.."
+chmod +x ${TARGET_DIR}/${CONFIG_SCRIPT}
 /usr/bin/arch-chroot ${TARGET_DIR} ${CONFIG_SCRIPT}

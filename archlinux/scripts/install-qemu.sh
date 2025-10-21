@@ -15,14 +15,8 @@ echo ">>>> install-qemu.sh: Installing qemu Guest Additions and NFS utilities.."
 
 echo ">>>> install-qemu.sh: Enabling qemu Guest service.."
 /usr/bin/systemctl enable qemu-guest-agent.service
-
-#echo ">>>> install-qemu.sh: Enabling RPC Bind service.."
-#/usr/bin/systemctl enable rpcbind.service
-
-# Add groups for qemu folder sharing
-#echo ">>>> install-qemu.sh: Enabling qemu Shared Folders.."
-#/usr/bin/usermod --append --groups $VBOX_USER,vboxsf $VBOX_USER
 EOF
 
 echo ">>>> install-qemu.sh: Entering chroot and configuring system.."
+chmod +x ${TARGET_DIR}/${CONFIG_SCRIPT}
 /usr/bin/arch-chroot ${TARGET_DIR} ${CONFIG_SCRIPT}
