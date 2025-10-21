@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 
-packer() {
+${tpl_hostname}() {
     export HAS_SWAP='true'
     export SWAP_LV="/dev/${tpl_vg}/swap"
     export IS_ENCRYPTED='false'
@@ -53,8 +53,8 @@ packer() {
     mount /dev/${tpl_vg}/boot /mnt/boot
 }
 
-if [ "$1" == "--packer" ];then
-        packer
+if [ "$1" == "--${tpl_hostname}" ];then
+    ${tpl_hostname}
 else
 	echo ">>>> prepae.sh: Error unknown host..."
 fi

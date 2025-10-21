@@ -55,6 +55,7 @@ source "qemu" "archlinux-bios" {
                        tpl_keymap = "${var.keymap}",
                        tpl_locale = "${var.locale}",
                        tpl_domain = "${var.domain}",
+                       tpl_hostname = "${var.hostname}",
                      }
                    )
      "/hosts" = templatefile(
@@ -142,6 +143,7 @@ source "qemu" "archlinux-uefi" {
                        tpl_keymap = "${var.keymap}",
                        tpl_locale = "${var.locale}",
                        tpl_domain = "${var.domain}",
+                       tpl_hostname = "${var.hostname}",
                      }
                    )
      "/hosts" = templatefile(

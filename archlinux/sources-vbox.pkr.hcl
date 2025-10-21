@@ -25,6 +25,7 @@ source "virtualbox-iso" "archlinux-uefi" {
                        tpl_keymap = "${var.keymap}",
                        tpl_locale = "${var.locale}",
                        tpl_domain = "${var.domain}",
+                       tpl_hostname = "${var.hostname}",
                      }
                    )
      "/hosts" = templatefile(
@@ -127,6 +128,7 @@ source "virtualbox-iso" "archlinux-bios" {
                        tpl_keymap = "${var.keymap}",
                        tpl_locale = "${var.locale}",
                        tpl_domain = "${var.domain}",
+                       tpl_hostname = "${var.hostname}",
                      }
                    )
      "/hosts" = templatefile(
