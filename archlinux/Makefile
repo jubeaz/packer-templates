@@ -15,7 +15,7 @@ qemu-bios:
 
 virtualbox-bios:
 	$(MAKE) build HYPERVISOR=virtualbox  BOXNAME= virtualbox-jubeaz-bios-archlinux-x86_64 VARFILE=arch-virtualbox-bios.pkrvars.hcl TARGET=virtualbox-iso.archlinux-bios
-	$(MAKE) deploy BOXNAME=virtualbox-jubeaz-bios-archlinux-x86_64
+	$(MAKE) deploy BOXNAME=virtualbox-jubeaz-bios-$(VERSION)
 
 validate:
 	packer validate -var "hypervisor=$(HYPERVISOR)" -var "headless=$(HEADLESS)" -var "archiso_verion=$(VERSION)" -var "template_name=$(TEMPLATE_NAME)" -var-file $(VARFILE) .
