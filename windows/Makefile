@@ -13,7 +13,7 @@ qemu-bios-windows-2022:
 			OS_V_VARFILE=windows-2022.pkrvars.hcl \
 			IS_CORE=false \
 			TARGET=qemu.windows-2022-bios
-	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-windows-2022
+#	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-windows-2022
 
 qemu-uefi-windows-2022:
 	$(MAKE) build HYPERVISOR=qemu \
@@ -23,24 +23,24 @@ qemu-uefi-windows-2022:
 			OS_V_VARFILE=windows-2022.pkrvars.hcl \
 			IS_CORE=false \
 			TARGET=qemu.windows-2022-uefi
-	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-windows-2022
+#	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-windows-2022
 
 qemu-bios-windows-2025:
 	$(MAKE) build HYPERVISOR=qemu \
 			VERSION=windows-2025 \
 			BOXNAME=qemu-jubeaz-bios-windows-2025 \
 			BUILD_T_VARFILE=windows-qemu-bios-windows-2025.pkrvars.hcl \
-			OS_V_VARFILE=windows-2022.pkrvars.hcl \
+			OS_V_VARFILE=windows-2025.pkrvars.hcl \
 			IS_CORE=false \
 			TARGET=qemu.windows-2025-bios
-	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-windows-2025
+#	$(MAKE) deploy BOXNAME=qemu-jubeaz-bios-windows-2025
 
 qemu-uefi-windows-2025:
 	$(MAKE) build HYPERVISOR=qemu \
 			VERSION=windows-2025 \
 			BOXNAME=qemu-jubeaz-uefi-windows-2025 \
 			BUILD_T_VARFILE=windows-qemu-uefi-windows-2025.pkrvars.hcl \
-			OS_V_VARFILE=windows-2022.pkrvars.hcl \
+			OS_V_VARFILE=windows-2025.pkrvars.hcl \
 			IS_CORE=false \
 			TARGET=qemu.windows-2025-uefi
 	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-windows-2025
@@ -53,7 +53,7 @@ qemu-uefi-windows-2025-core:
 			OS_V_VARFILE=windows-2025.pkrvars.hcl \
 			IS_CORE=true \
 			TARGET=qemu.windows-2025-uefi
-	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-windows-2025
+#	$(MAKE) deploy BOXNAME=qemu-jubeaz-uefi-windows-2025
 
 download:
 	 curl -L -o binaries/virtio-win-guest-tools.exe https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.271-1/virtio-win-guest-tools.exe
